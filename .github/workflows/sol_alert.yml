@@ -5,6 +5,9 @@ on:
     - cron: '0 * * * *'   # runs every hour at :00
   workflow_dispatch:        # allows manual trigger from GitHub website
 
+permissions:
+  contents: write           # needed to commit report/index.html
+
 jobs:
   send-alert:
     runs-on: ubuntu-latest
@@ -24,3 +27,11 @@ jobs:
           EMAIL_TO:       ${{ secrets.EMAIL_TO }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: python sol_email_alert.py
+
+      - name: Commit and push report
+        run: |
+          git config user.name "SOL Alert Bot"
+          git config user.email "bot@noreply.github.com"
+          git add report/index.html
+          git diff --staged --quiet || git commit -m "report: SOL analysis $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push

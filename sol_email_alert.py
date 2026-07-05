@@ -1,26 +1,25 @@
 """
-SOL/USDT Comprehensive Hourly Email Alert
-==========================================
+SOL/USDT Hourly Alert — HTML Email + GitHub Pages Report
+=========================================================
 Timeframes: Weekly, Daily, 4H, 1H, 15M
-Sends full SMC analysis with trade plan every hour.
+- Sends beautifully formatted HTML email every hour
+- Saves HTML report to report/index.html (served via GitHub Pages)
 """
 
 import urllib.request
 import json
 import smtplib
+import os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timezone
 
 # ─── CONFIG ───────────────────────────────────────────────
-import os
 EMAIL_FROM     = os.environ.get("EMAIL_FROM",     "muhammadbilalafzal1@gmail.com")
 EMAIL_TO       = os.environ.get("EMAIL_TO",       "muhammadbilalafzal1@gmail.com")
 EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD", "msdimmmadnsoraqy")
-# Auto-detect environment:
-# On GitHub Actions (US servers) -> Binance is blocked -> use Kraken
-# Locally (Pakistan) -> Kraken is blocked -> use Binance
-IS_GITHUB = os.environ.get("GITHUB_ACTIONS") == "true"
+IS_GITHUB      = os.environ.get("GITHUB_ACTIONS") == "true"
+REPORT_PATH    = os.path.join(os.path.dirname(os.path.abspath(__file__)), "report", "index.html")
 # ──────────────────────────────────────────────────────────
 
 
@@ -30,72 +29,47 @@ def fetch(url):
         return json.loads(r.read().decode())
 
 
-# ── BINANCE (local) ──────────────────────────────────────
+# ── BINANCE (local) ───────────────────────────────────────
 def get_stats_binance():
-    url  = "https://api.binance.com/api/v3/ticker/24hr?symbol=SOLUSDT"
-    d    = fetch(url)
-    return {
-        "lastPrice":          d["lastPrice"],
-        "priceChangePercent": d["priceChangePercent"],
-        "highPrice":          d["highPrice"],
-        "lowPrice":           d["lowPrice"],
-        "volume":             d["volume"],
-    }
+    d = fetch("https://api.binance.com/api/v3/ticker/24hr?symbol=SOLUSDT")
+    return {"lastPrice": d["lastPrice"], "priceChangePercent": d["priceChangePercent"],
+            "highPrice": d["highPrice"], "lowPrice": d["lowPrice"], "volume": d["volume"]}
 
 def get_candles_binance(interval, limit=200):
-    # intervals: 15m, 1h, 4h, 1d, 1w
     url = f"https://api.binance.com/api/v3/klines?symbol=SOLUSDT&interval={interval}&limit={limit}"
     raw = fetch(url)
-    return [{"time": int(c[0])//1000, "open": float(c[1]),
-             "high": float(c[2]), "low": float(c[3]),
-             "close": float(c[4]), "volume": float(c[5])} for c in raw]
+    return [{"time": int(c[0])//1000, "open": float(c[1]), "high": float(c[2]),
+             "low": float(c[3]), "close": float(c[4]), "volume": float(c[5])} for c in raw]
 
-
-# ── KRAKEN (GitHub Actions) ──────────────────────────────
+# ── KRAKEN (GitHub Actions) ───────────────────────────────
 def get_stats_kraken():
-    url  = "https://api.kraken.com/0/public/Ticker?pair=SOLUSD"
-    data = fetch(url)["result"]
+    data = fetch("https://api.kraken.com/0/public/Ticker?pair=SOLUSD")["result"]
     key  = [k for k in data if k != "last"][0]
     t    = data[key]
     price  = float(t["c"][0])
     open24 = float(t["o"])
     chg    = ((price - open24) / open24 * 100) if open24 else 0
-    return {
-        "lastPrice":          str(round(price, 4)),
-        "priceChangePercent": str(round(chg, 2)),
-        "highPrice":          str(t["h"][1]),
-        "lowPrice":           str(t["l"][1]),
-        "volume":             str(t["v"][1]),
-    }
+    return {"lastPrice": str(round(price, 4)), "priceChangePercent": str(round(chg, 2)),
+            "highPrice": str(t["h"][1]), "lowPrice": str(t["l"][1]), "volume": str(t["v"][1])}
 
 def get_candles_kraken(interval, limit=200):
-    # intervals (minutes): 15, 60, 240, 1440, 10080
     url    = f"https://api.kraken.com/0/public/OHLC?pair=SOLUSD&interval={interval}"
     result = fetch(url)["result"]
     key    = [k for k in result if k != "last"][0]
     raw    = result[key][-limit:]
-    return [{"time": int(c[0]), "open": float(c[1]),
-             "high": float(c[2]), "low": float(c[3]),
-             "close": float(c[4]), "volume": float(c[6])} for c in raw]
+    return [{"time": int(c[0]), "open": float(c[1]), "high": float(c[2]),
+             "low": float(c[3]), "close": float(c[4]), "volume": float(c[6])} for c in raw]
 
-
-# ── UNIFIED API (auto-selects) ───────────────────────────
+# ── UNIFIED ───────────────────────────────────────────────
 def get_stats():
-    if IS_GITHUB:
-        return get_stats_kraken()
-    return get_stats_binance()
+    return get_stats_kraken() if IS_GITHUB else get_stats_binance()
 
 def get_candles(tf, limit=200):
-    """
-    tf = timeframe string used by both APIs:
-      "W" -> weekly, "D" -> daily, "4H" -> 4 hour, "1H" -> 1 hour, "15M" -> 15 min
-    """
     if IS_GITHUB:
-        mapping = {"W": 10080, "D": 1440, "4H": 240, "1H": 60, "15M": 15}
-        return get_candles_kraken(mapping[tf], limit)
-    else:
-        mapping = {"W": "1w", "D": "1d", "4H": "4h", "1H": "1h", "15M": "15m"}
-        return get_candles_binance(mapping[tf], limit)
+        m = {"W": 10080, "D": 1440, "4H": 240, "1H": 60, "15M": 15}
+        return get_candles_kraken(m[tf], limit)
+    m = {"W": "1w", "D": "1d", "4H": "4h", "1H": "1h", "15M": "15m"}
+    return get_candles_binance(m[tf], limit)
 
 
 # ─── SMC TOOLS ────────────────────────────────────────────
@@ -104,12 +78,11 @@ def find_swings(candles, lookback=5):
     data = candles[-100:]
     sh, sl = [], []
     for i in range(lookback, len(data) - lookback):
-        win_h = [data[i-lookback+k]["high"] for k in range(lookback*2+1) if k != lookback]
-        win_l = [data[i-lookback+k]["low"]  for k in range(lookback*2+1) if k != lookback]
-        if data[i]["high"] >= max(win_h): sh.append(round(data[i]["high"], 4))
-        if data[i]["low"]  <= min(win_l): sl.append(round(data[i]["low"],  4))
+        wh = [data[i-lookback+k]["high"] for k in range(lookback*2+1) if k != lookback]
+        wl = [data[i-lookback+k]["low"]  for k in range(lookback*2+1) if k != lookback]
+        if data[i]["high"] >= max(wh): sh.append(round(data[i]["high"], 4))
+        if data[i]["low"]  <= min(wl): sl.append(round(data[i]["low"],  4))
     return sorted(set(sh), reverse=True)[:6], sorted(set(sl))[:6]
-
 
 def find_equal_levels(candles, tolerance=0.003):
     recent = candles[-60:]
@@ -126,452 +99,418 @@ def find_equal_levels(candles, tolerance=0.003):
                 eq_l.add(round((lows[i]+lows[j])/2, 2))
     return sorted(eq_h, reverse=True)[:5], sorted(eq_l, reverse=True)[:5]
 
-
 def find_fvg(candles):
-    """Find the most recent Fair Value Gaps (last 30 candles)."""
     fvgs = []
     data = candles[-30:]
     for i in range(1, len(data)-1):
-        # Bullish FVG: candle[i-1] high < candle[i+1] low
         if data[i-1]["high"] < data[i+1]["low"]:
-            fvgs.append(("BULLISH FVG", round(data[i-1]["high"], 2), round(data[i+1]["low"], 2)))
-        # Bearish FVG: candle[i-1] low > candle[i+1] high
+            fvgs.append(("Bullish FVG", round(data[i-1]["high"],2), round(data[i+1]["low"],2)))
         if data[i-1]["low"] > data[i+1]["high"]:
-            fvgs.append(("BEARISH FVG", round(data[i+1]["high"], 2), round(data[i-1]["low"], 2)))
+            fvgs.append(("Bearish FVG", round(data[i+1]["high"],2), round(data[i-1]["low"],2)))
     return fvgs[-3:] if fvgs else []
 
-
-def find_order_block(candles):
-    """Find the most recent bullish and bearish order blocks."""
+def find_order_blocks(candles):
     obs = []
     data = candles[-40:]
     for i in range(len(data)-4):
-        # Bullish OB: last bearish candle before a 3+ candle bullish move
-        if data[i]["close"] < data[i]["open"]:  # bearish candle
+        if data[i]["close"] < data[i]["open"]:
             if all(data[i+k]["close"] > data[i+k]["open"] for k in range(1,3)):
                 if data[i+2]["close"] > data[i]["high"]:
-                    obs.append(("BULLISH OB", round(data[i]["low"],2), round(data[i]["high"],2)))
-        # Bearish OB: last bullish candle before a 3+ candle bearish move
-        if data[i]["close"] > data[i]["open"]:  # bullish candle
+                    obs.append(("Bullish OB", round(data[i]["low"],2), round(data[i]["high"],2)))
+        if data[i]["close"] > data[i]["open"]:
             if all(data[i+k]["close"] < data[i+k]["open"] for k in range(1,3)):
                 if data[i+2]["close"] < data[i]["low"]:
-                    obs.append(("BEARISH OB", round(data[i]["low"],2), round(data[i]["high"],2)))
+                    obs.append(("Bearish OB", round(data[i]["low"],2), round(data[i]["high"],2)))
     return obs[-2:] if obs else []
 
-
 def market_structure(candles):
-    """Determine HTF market structure."""
-    data = candles[-30:]
-    highs  = [c["high"]  for c in data]
-    lows   = [c["low"]   for c in data]
-    closes = [c["close"] for c in data]
-    mid    = len(data)//2
-
-    recent_high = max(highs[mid:])
-    prev_high   = max(highs[:mid])
-    recent_low  = min(lows[mid:])
-    prev_low    = min(lows[:mid])
-
-    if recent_high > prev_high and recent_low > prev_low:
-        return "BULLISH", "Higher Highs + Higher Lows"
-    elif recent_high < prev_high and recent_low < prev_low:
-        return "BEARISH", "Lower Highs + Lower Lows"
-    elif recent_high > prev_high and recent_low < prev_low:
-        return "EXPANSION", "Expanding range - volatile"
-    else:
-        return "RANGING", "Consolidation - no clear direction"
-
+    data  = candles[-30:]
+    mid   = len(data)//2
+    rh    = max(c["high"] for c in data[mid:])
+    ph    = max(c["high"] for c in data[:mid])
+    rl    = min(c["low"]  for c in data[mid:])
+    pl    = min(c["low"]  for c in data[:mid])
+    if rh > ph and rl > pl: return "BULLISH"
+    if rh < ph and rl < pl: return "BEARISH"
+    return "RANGING"
 
 def premium_discount(candles):
-    """Determine if price is in premium or discount."""
-    price  = candles[-1]["close"]
-    high   = max(c["high"] for c in candles[-30:])
-    low    = min(c["low"]  for c in candles[-30:])
-    eq     = (high + low) / 2
-    rng    = high - low
-    pct    = ((price - low) / rng * 100) if rng > 0 else 50
-
-    if pct >= 75:   zone = "DEEP PREMIUM (75-100%) - Strong sell bias"
-    elif pct >= 50: zone = "PREMIUM (50-75%) - Cautious longs, prefer sells"
-    elif pct >= 25: zone = "DISCOUNT (25-50%) - Prefer longs"
-    else:           zone = "DEEP DISCOUNT (0-25%) - Strong buy bias"
-
+    price = candles[-1]["close"]
+    high  = max(c["high"] for c in candles[-30:])
+    low   = min(c["low"]  for c in candles[-30:])
+    eq    = (high + low) / 2
+    rng   = high - low
+    pct   = ((price - low) / rng * 100) if rng > 0 else 50
+    if pct >= 75:   zone = "DEEP PREMIUM"
+    elif pct >= 50: zone = "PREMIUM"
+    elif pct >= 25: zone = "DISCOUNT"
+    else:           zone = "DEEP DISCOUNT"
     return zone, round(eq, 2), round(pct, 1)
 
-
-def sweep_proximity(price, eq_highs, eq_lows, threshold=0.8):
-    """Check if price is very close to a sweep zone."""
+def sweep_proximity(price, eq_h, eq_l, threshold=0.8):
     alerts = []
-    for h in eq_highs:
+    for h in eq_h:
         if h > price:
-            dist_pct = (h - price) / price * 100
-            if dist_pct <= threshold:
-                alerts.append(f"!! BSL SWEEP IMMINENT: Equal Highs at ${h} only {dist_pct:.2f}% away")
-    for l in eq_lows:
+            d = (h - price) / price * 100
+            if d <= threshold:
+                alerts.append(f"BSL SWEEP IMMINENT: Equal Highs ${h} ({d:.2f}% away)")
+    for l in eq_l:
         if l < price:
-            dist_pct = (price - l) / price * 100
-            if dist_pct <= threshold:
-                alerts.append(f"!! SSL SWEEP IMMINENT: Equal Lows at ${l} only {dist_pct:.2f}% away")
+            d = (price - l) / price * 100
+            if d <= threshold:
+                alerts.append(f"SSL SWEEP IMMINENT: Equal Lows ${l} ({d:.2f}% away)")
     return alerts
-
-
-def choch_bos_check(candles):
-    """Simple CHoCH/BOS detection on recent candles."""
-    data   = candles[-20:]
-    price  = data[-1]["close"]
-    recent_highs = sorted([c["high"] for c in data[:-3]], reverse=True)
-    recent_lows  = sorted([c["low"]  for c in data[:-3]])
-
-    signals = []
-    if recent_highs and price > recent_highs[0]:
-        signals.append("BOS UP detected - price broke above recent swing high (bullish continuation)")
-    if recent_lows and price < recent_lows[0]:
-        signals.append("BOS DOWN detected - price broke below recent swing low (bearish continuation)")
-    return signals
-
-
-# ─── TIMEFRAME ANALYSIS ───────────────────────────────────
 
 def analyse_tf(candles, label):
     price         = candles[-1]["close"]
-    prev_close    = candles[-2]["close"]
-    candle_dir    = "GREEN (bullish)" if price >= candles[-1]["open"] else "RED (bearish)"
-    bias, struct  = market_structure(candles)
+    bias          = market_structure(candles)
     zone, eq_pt, pct = premium_discount(candles)
     sw_h, sw_l    = find_swings(candles)
     eq_h, eq_l    = find_equal_levels(candles)
     fvgs          = find_fvg(candles)
-    obs           = find_order_block(candles)
+    obs           = find_order_blocks(candles)
     sweeps        = sweep_proximity(price, eq_h, eq_l)
-    bos           = choch_bos_check(candles)
+    bsl           = [h for h in sw_h if h > price][:3]
+    ssl           = [l for l in sw_l if l < price][:3]
+    last_candle   = "GREEN" if candles[-1]["close"] >= candles[-1]["open"] else "RED"
+    return {
+        "label": label, "price": price, "bias": bias,
+        "zone": zone, "eq_pt": eq_pt, "pct": pct,
+        "bsl": bsl, "ssl": ssl, "eq_h": eq_h, "eq_l": eq_l,
+        "fvgs": fvgs, "obs": obs, "sweeps": sweeps, "last_candle": last_candle
+    }
 
-    bsl = [h for h in sw_h if h > price][:3]
-    ssl = [l for l in sw_l if l < price][:3]
+def build_trade_plan(price, w, d, h4, h1, m15):
+    biases   = [w["bias"], d["bias"], h4["bias"]]
+    bull_cnt = biases.count("BULLISH")
+    bear_cnt = biases.count("BEARISH")
+    if bull_cnt >= 2:   direction, overall = "LONG",  "BULLISH"
+    elif bear_cnt >= 2: direction, overall = "SHORT", "BEARISH"
+    else:               direction, overall = "WAIT",  "MIXED"
 
-    lines = [
-        f"",
-        f"{'='*50}",
-        f"  {label}",
-        f"{'='*50}",
-        f"  Last candle:    ${price:.2f}  [{candle_dir}]",
-        f"  Prev close:     ${prev_close:.2f}",
-        f"  Structure:      {bias} — {struct}",
-        f"  Price zone:     {zone}",
-        f"  Equilibrium:    ${eq_pt:.2f}  (price at {pct}% of range)",
-        f"",
-        f"  BUY-SIDE LIQUIDITY (BSL) — above price:",
-    ]
-    if bsl:
-        for b in bsl: lines.append(f"    ${b:.2f}")
-    else:
-        lines.append("    None identified in recent range")
+    ssl_targets = sorted([l for l in (h1["eq_l"] or []) + (h1["ssl"] or []) if l < price])
+    bsl_targets = sorted([h for h in (h1["eq_h"] or []) + (h1["bsl"] or []) if h > price])
 
-    lines.append(f"")
-    lines.append(f"  SELL-SIDE LIQUIDITY (SSL) — below price:")
-    if ssl:
-        for s in ssl: lines.append(f"    ${s:.2f}")
-    else:
-        lines.append("    None identified in recent range")
+    sweep_level = ssl_targets[0] if ssl_targets and direction == "LONG" else \
+                  bsl_targets[0] if bsl_targets and direction == "SHORT" else None
 
-    if eq_h:
-        lines.append(f"")
-        lines.append(f"  EQUAL HIGHS (BSL pools — sweep targets):")
-        for h in eq_h: lines.append(f"    ${h:.2f}")
+    targets = bsl_targets[:3] if direction == "LONG" else ssl_targets[:3]
+    stop    = round(ssl_targets[0] - 1.0, 2) if direction == "LONG" and ssl_targets else \
+              round(bsl_targets[0] + 1.0, 2) if direction == "SHORT" and bsl_targets else None
 
-    if eq_l:
-        lines.append(f"")
-        lines.append(f"  EQUAL LOWS (SSL pools — sweep targets):")
-        for l in eq_l: lines.append(f"    ${l:.2f}")
-
-    if fvgs:
-        lines.append(f"")
-        lines.append(f"  FAIR VALUE GAPS (price magnets):")
-        for fvg in fvgs:
-            lines.append(f"    {fvg[0]}: ${fvg[1]} - ${fvg[2]}")
-
-    if obs:
-        lines.append(f"")
-        lines.append(f"  ORDER BLOCKS (reaction zones):")
-        for ob in obs:
-            lines.append(f"    {ob[0]}: ${ob[1]} - ${ob[2]}")
-
-    if bos:
-        lines.append(f"")
-        lines.append(f"  STRUCTURE SIGNALS:")
-        for b in bos: lines.append(f"    -> {b}")
-
-    if sweeps:
-        lines.append(f"")
-        lines.append(f"  *** SWEEP ALERTS ***")
-        for s in sweeps: lines.append(f"    {s}")
-
-    return "\n".join(lines), bias, sweeps, bsl, ssl, eq_h, eq_l
+    return {
+        "direction": direction, "overall": overall,
+        "sweep_level": sweep_level, "targets": targets,
+        "stop": stop, "biases": biases,
+        "w_bias": w["bias"], "d_bias": d["bias"],
+        "h4_bias": h4["bias"], "h1_bias": h1["bias"],
+        "h1_eq_l": h1["eq_l"], "h1_eq_h": h1["eq_h"],
+        "m15_eq_l": m15["eq_l"], "m15_eq_h": m15["eq_h"],
+        "all_sweeps": w["sweeps"] + d["sweeps"] + h4["sweeps"] + h1["sweeps"] + m15["sweeps"]
+    }
 
 
-# ─── TRADE PLAN ───────────────────────────────────────────
+# ─── HTML GENERATION ──────────────────────────────────────
 
-def build_trade_plan(price, w_bias, d_bias, h4_bias,
-                     h1_eq_h, h1_eq_l, h1_bsl, h1_ssl,
-                     h4_bsl, h4_ssl, h15_eq_h, h15_eq_l):
+def bias_color(bias):
+    if bias == "BULLISH": return "#3fb950"
+    if bias == "BEARISH": return "#f85149"
+    return "#d29922"
 
-    lines = [
-        f"",
-        f"{'='*50}",
-        f"  TRADE PLAN & WHAT TO DO NOW",
-        f"{'='*50}",
-        f"",
-        f"  BIAS SUMMARY:",
-        f"  Weekly:  {w_bias}",
-        f"  Daily:   {d_bias}",
-        f"  4H:      {h4_bias}",
-        f"",
-    ]
+def zone_color(zone):
+    if "DEEP PREMIUM" in zone: return "#f85149"
+    if "PREMIUM" in zone:      return "#d29922"
+    if "DEEP DISCOUNT" in zone:return "#3fb950"
+    return "#58a6ff"
 
-    # Determine overall bias
-    biases   = [w_bias, d_bias, h4_bias]
-    bull_cnt = sum(1 for b in biases if b == "BULLISH")
-    bear_cnt = sum(1 for b in biases if b == "BEARISH")
+def candle_color(c):
+    return "#3fb950" if c == "GREEN" else "#f85149"
 
-    if bull_cnt >= 2:
-        overall = "BULLISH"
-        direction = "LONG"
-    elif bear_cnt >= 2:
-        overall = "BEARISH"
-        direction = "SHORT"
-    else:
-        overall = "MIXED / NO CLEAR BIAS"
-        direction = "WAIT — timeframes conflict"
+def levels_rows(items, color):
+    if not items: return "<tr><td colspan='2' style='color:#8b949e;'>None identified</td></tr>"
+    return "".join(f"<tr><td style='color:{color};font-weight:bold;'>${x:.2f}</td>"
+                   f"<td style='color:#8b949e;font-size:12px;'>{'BSL — buy stops above' if color=='#3fb950' else 'SSL — sell stops below'}</td></tr>"
+                   for x in items)
 
-    lines.append(f"  OVERALL BIAS:   {overall}")
-    lines.append(f"  DIRECTION:      {direction}")
-    lines.append(f"")
+def tf_card(tf):
+    bc = bias_color(tf["bias"])
+    zc = zone_color(tf["zone"])
+    lc = candle_color(tf["last_candle"])
+    fvg_html = "".join(f"<span style='background:#21262d;border-radius:4px;padding:2px 8px;"
+                       f"margin:2px;font-size:12px;color:#58a6ff;'>{f[0]}: ${f[1]}-${f[2]}</span>"
+                       for f in tf["fvgs"]) or "<span style='color:#8b949e;font-size:12px;'>None recent</span>"
+    ob_html  = "".join(f"<span style='background:#21262d;border-radius:4px;padding:2px 8px;"
+                       f"margin:2px;font-size:12px;color:#d29922;'>{o[0]}: ${o[1]}-${o[2]}</span>"
+                       for o in tf["obs"]) or "<span style='color:#8b949e;font-size:12px;'>None recent</span>"
+    sweep_html = "".join(f"<div style='background:#2d1b1b;border-left:3px solid #f85149;"
+                         f"padding:8px;margin:4px 0;border-radius:0 4px 4px 0;font-size:13px;color:#f85149;'>"
+                         f"!! {s}</div>" for s in tf["sweeps"])
 
-    if direction == "LONG":
-        # Find nearest SSL for sweep
-        ssl_targets = sorted([l for l in (h1_eq_l or []) + (h1_ssl or []) if l < price])
-        bsl_targets = sorted([h for h in (h1_eq_h or []) + (h1_bsl or []) if h > price])
-        ob_support  = sorted([h for h in (h4_ssl or []) if h < price], reverse=True)
+    return f"""
+<div style='background:#161b22;border:1px solid #30363d;border-radius:8px;margin:12px 0;overflow:hidden;'>
+  <div style='background:#21262d;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;'>
+    <span style='font-size:16px;font-weight:bold;color:#f0f6fc;'>{tf["label"]}</span>
+    <span style='background:{bc};color:#000;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:bold;'>{tf["bias"]}</span>
+  </div>
+  <div style='padding:16px;'>
+    <div style='display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;'>
+      <div><span style='color:#8b949e;font-size:11px;display:block;'>LAST CLOSE</span>
+           <span style='color:{lc};font-size:20px;font-weight:bold;'>${tf["price"]:.2f}</span>
+           <span style='color:{lc};font-size:11px;'> {tf["last_candle"]}</span></div>
+      <div><span style='color:#8b949e;font-size:11px;display:block;'>ZONE</span>
+           <span style='color:{zc};font-size:14px;font-weight:bold;'>{tf["zone"]}</span>
+           <span style='color:#8b949e;font-size:11px;'> ({tf["pct"]}% of range)</span></div>
+      <div><span style='color:#8b949e;font-size:11px;display:block;'>EQUILIBRIUM</span>
+           <span style='color:#f0f6fc;font-size:14px;font-weight:bold;'>${tf["eq_pt"]:.2f}</span></div>
+    </div>
+    <div style='display:flex;gap:12px;flex-wrap:wrap;'>
+      <div style='flex:1;min-width:140px;'>
+        <div style='color:#8b949e;font-size:11px;text-transform:uppercase;margin-bottom:6px;'>BSL Above Price</div>
+        {"".join(f"<div style='color:#3fb950;font-size:13px;padding:2px 0;'>&#9650; ${x:.2f}</div>" for x in tf["bsl"]) or "<div style='color:#8b949e;font-size:12px;'>None</div>"}
+        {"".join(f"<div style='color:#58a6ff;font-size:12px;padding:2px 0;'>= ${x:.2f} (equal highs)</div>" for x in tf["eq_h"][:2]) }
+      </div>
+      <div style='flex:1;min-width:140px;'>
+        <div style='color:#8b949e;font-size:11px;text-transform:uppercase;margin-bottom:6px;'>SSL Below Price</div>
+        {"".join(f"<div style='color:#f85149;font-size:13px;padding:2px 0;'>&#9660; ${x:.2f}</div>" for x in tf["ssl"]) or "<div style='color:#8b949e;font-size:12px;'>None</div>"}
+        {"".join(f"<div style='color:#58a6ff;font-size:12px;padding:2px 0;'>= ${x:.2f} (equal lows)</div>" for x in tf["eq_l"][:2]) }
+      </div>
+      <div style='flex:1;min-width:140px;'>
+        <div style='color:#8b949e;font-size:11px;text-transform:uppercase;margin-bottom:6px;'>FVGs</div>
+        {fvg_html}
+        <div style='color:#8b949e;font-size:11px;text-transform:uppercase;margin:8px 0 4px;'>Order Blocks</div>
+        {ob_html}
+      </div>
+    </div>
+    {sweep_html}
+  </div>
+</div>"""
 
-        lines += [
-            f"  LONG SETUP — STEP BY STEP:",
-            f"  {'─'*40}",
-            f"  STEP 1 — WAIT FOR SSL SWEEP",
-        ]
-        if ssl_targets:
-            lines.append(f"    Watch for price to dip below: ${ssl_targets[0]:.2f}")
-            lines.append(f"    You need to see a WICK below this level")
-            lines.append(f"    Candle must CLOSE back above it")
-        else:
-            lines.append(f"    Watch for a wick sweep below recent 1H swing lows")
+def generate_html(stats, w, d, h4, h1, m15, plan, now):
+    price  = float(stats["lastPrice"])
+    chg    = float(stats["priceChangePercent"])
+    h24h   = float(stats["highPrice"])
+    h24l   = float(stats["lowPrice"])
+    vol    = float(stats["volume"])
+    chg_c  = "#3fb950" if chg >= 0 else "#f85149"
+    chg_s  = f"+{chg:.2f}%" if chg >= 0 else f"{chg:.2f}%"
+    dir_c  = bias_color(plan["overall"])
+    has_alerts = len(plan["all_sweeps"]) > 0
 
-        lines += [
-            f"",
-            f"  STEP 2 — WAIT FOR CHoCH ON 1H",
-            f"    After the sweep, price reverses up",
-            f"    Wait for 1H candle to break above the nearest swing high",
-            f"    That break = CHoCH = trend shifted bullish on 1H",
-            f"",
-            f"  STEP 3 — ENTER ON RETEST",
-            f"    After CHoCH, price will dip slightly (into FVG or OB)",
-            f"    ENTER LONG on that dip — do not enter on the CHoCH break",
-        ]
+    alert_banner = ""
+    if has_alerts:
+        alert_banner = f"""
+<div style='background:#2d1b1b;border:1px solid #f85149;border-radius:8px;padding:16px;margin:12px 0;'>
+  <div style='color:#f85149;font-size:16px;font-weight:bold;margin-bottom:8px;'>!! SWEEP ALERT ACTIVE</div>
+  {"".join(f"<div style='color:#ffa0a0;font-size:13px;padding:2px 0;'>{s}</div>" for s in plan["all_sweeps"])}
+</div>"""
 
-        if bsl_targets:
-            lines.append(f"")
-            lines.append(f"  TARGETS (BSL pools above):")
-            for i, t in enumerate(bsl_targets[:3], 1):
-                lines.append(f"    Target {i}: ${t:.2f}")
+    targets_html = "".join(
+        f"<div style='background:#21262d;border-radius:6px;padding:10px;text-align:center;flex:1;min-width:80px;'>"
+        f"<div style='color:#8b949e;font-size:11px;'>T{i+1}</div>"
+        f"<div style='color:#3fb950;font-size:16px;font-weight:bold;'>${t:.2f}</div></div>"
+        for i, t in enumerate(plan["targets"])
+    ) if plan["targets"] else "<div style='color:#8b949e;'>Wait for bias to align</div>"
 
-        lines += [
-            f"",
-            f"  STOP LOSS:    Below the sweep wick low",
-            f"  MAX HOLD:     Do not hold past $85-86 (Daily supply wall)",
-            f"  RISK:         Max 1-2% of account per trade",
-        ]
+    step1_level = f"${plan['sweep_level']:.2f}" if plan["sweep_level"] else "nearest swing low"
+    step1_dir   = "below" if plan["direction"] == "LONG" else "above"
+    choch_dir   = "above nearest 1H swing high" if plan["direction"] == "LONG" else "below nearest 1H swing low"
+    stop_html   = f"<span style='color:#f85149;font-weight:bold;'>${plan['stop']:.2f}</span>" if plan["stop"] else "<span style='color:#f85149;'>Below sweep wick</span>"
 
-    elif direction == "SHORT":
-        bsl_targets = sorted([h for h in (h1_eq_h or []) + (h1_bsl or []) if h > price], reverse=True)
-        ssl_targets = sorted([l for l in (h1_eq_l or []) + (h1_ssl or []) if l < price], reverse=True)
+    m15_watch = ""
+    if m15["eq_l"]:
+        m15_watch += f"<div style='color:#58a6ff;font-size:13px;padding:3px 0;'>Equal Lows at {', '.join(f'${x}' for x in m15['eq_l'][:2])} — watch for SSL sweep + 15M CHoCH up</div>"
+    if m15["eq_h"]:
+        m15_watch += f"<div style='color:#58a6ff;font-size:13px;padding:3px 0;'>Equal Highs at {', '.join(f'${x}' for x in m15['eq_h'][:2])} — watch for BSL sweep + 15M CHoCH down</div>"
+    if not m15_watch:
+        m15_watch = "<div style='color:#8b949e;font-size:13px;'>No clear equal levels on 15M right now</div>"
 
-        lines += [
-            f"  SHORT SETUP — STEP BY STEP:",
-            f"  {'─'*40}",
-            f"  STEP 1 — WAIT FOR BSL SWEEP",
-        ]
-        if bsl_targets:
-            lines.append(f"    Watch for price to spike above: ${bsl_targets[0]:.2f}")
-            lines.append(f"    You need to see a WICK above this level")
-            lines.append(f"    Candle must CLOSE back below it")
+    return f"""<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>SOL/USDT Analysis — {now}</title>
+</head>
+<body style='margin:0;padding:0;background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;'>
+<div style='max-width:800px;margin:0 auto;padding:16px;'>
 
-        lines += [
-            f"",
-            f"  STEP 2 — WAIT FOR CHoCH ON 1H",
-            f"    After the sweep, price reverses down",
-            f"    Wait for 1H candle to break below nearest swing low",
-            f"    That break = CHoCH = trend shifted bearish on 1H",
-            f"",
-            f"  STEP 3 — ENTER ON RETEST",
-            f"    After CHoCH down, price will bounce slightly",
-            f"    ENTER SHORT on that bounce — do not enter on the break",
-        ]
+  <!-- HEADER -->
+  <div style='background:#161b22;border:1px solid #30363d;border-radius:8px;padding:20px;margin-bottom:12px;'>
+    <div style='display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;'>
+      <div>
+        <div style='color:#8b949e;font-size:12px;text-transform:uppercase;letter-spacing:1px;'>SOL / USDT</div>
+        <div style='font-size:42px;font-weight:bold;color:#f0f6fc;line-height:1.1;'>${price:.2f}</div>
+        <div style='font-size:18px;color:{chg_c};'>{chg_s} (24h)</div>
+      </div>
+      <div style='text-align:right;'>
+        <div style='color:#8b949e;font-size:12px;margin-bottom:4px;'>Last updated</div>
+        <div style='color:#f0f6fc;font-size:13px;'>{now}</div>
+        <div style='margin-top:8px;'>
+          <span style='background:{dir_c};color:#000;padding:5px 14px;border-radius:16px;font-weight:bold;font-size:14px;'>{plan["direction"]}</span>
+        </div>
+      </div>
+    </div>
+    <div style='display:flex;gap:16px;margin-top:16px;flex-wrap:wrap;border-top:1px solid #30363d;padding-top:16px;'>
+      <div><span style='color:#8b949e;font-size:11px;'>24H HIGH</span><br><span style='color:#3fb950;font-weight:bold;'>${h24h:.2f}</span></div>
+      <div><span style='color:#8b949e;font-size:11px;'>24H LOW</span><br><span style='color:#f85149;font-weight:bold;'>${h24l:.2f}</span></div>
+      <div><span style='color:#8b949e;font-size:11px;'>24H VOLUME</span><br><span style='color:#f0f6fc;font-weight:bold;'>{vol:,.0f} SOL</span></div>
+      <div><span style='color:#8b949e;font-size:11px;'>DATA SOURCE</span><br><span style='color:#f0f6fc;font-size:12px;'>{"Kraken" if IS_GITHUB else "Binance"}</span></div>
+    </div>
+  </div>
 
-        if ssl_targets:
-            lines.append(f"")
-            lines.append(f"  TARGETS (SSL pools below):")
-            for i, t in enumerate(ssl_targets[:3], 1):
-                lines.append(f"    Target {i}: ${t:.2f}")
+  {alert_banner}
 
-        lines += [
-            f"",
-            f"  STOP LOSS:    Above the sweep wick high",
-            f"  RISK:         Max 1-2% of account per trade",
-        ]
+  <!-- BIAS SUMMARY -->
+  <div style='background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:12px;'>
+    <div style='color:#8b949e;font-size:12px;text-transform:uppercase;margin-bottom:12px;'>Timeframe Bias Summary</div>
+    <div style='display:flex;gap:8px;flex-wrap:wrap;'>
+      {"".join(f"<div style='background:#21262d;border-radius:6px;padding:10px 14px;text-align:center;flex:1;min-width:80px;'><div style='color:#8b949e;font-size:11px;'>{lbl}</div><div style='color:{bias_color(b)};font-weight:bold;font-size:13px;margin-top:4px;'>{b}</div></div>" for lbl, b in [("Weekly",plan["w_bias"]),("Daily",plan["d_bias"]),("4H",plan["h4_bias"]),("1H",plan["h1_bias"])])}
+    </div>
+  </div>
 
-    else:
-        lines += [
-            f"  ACTION: DO NOT TRADE RIGHT NOW",
-            f"  {'─'*40}",
-            f"  Weekly, Daily and 4H timeframes are conflicting.",
-            f"  Wait until at least 2 out of 3 agree on direction.",
-            f"  Trading in a conflicted market = gambling, not trading.",
-            f"  Sit on your hands and wait for clarity.",
-        ]
+  <!-- TRADE PLAN -->
+  <div style='background:#161b22;border:1px solid #30363d;border-radius:8px;margin-bottom:12px;overflow:hidden;'>
+    <div style='background:#21262d;padding:12px 16px;'>
+      <span style='font-size:16px;font-weight:bold;color:#f0f6fc;'>Trade Plan</span>
+      <span style='float:right;background:{dir_c};color:#000;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:bold;'>{plan["direction"]}</span>
+    </div>
+    <div style='padding:16px;'>
+      {"<div style='color:#d29922;background:#2d2a1b;border-radius:6px;padding:12px;margin-bottom:12px;font-size:13px;'>Timeframes are conflicting. Do NOT trade until at least 2 out of 3 align. Sit on hands.</div>" if plan["direction"] == "WAIT" else f"""
+      <div style='margin-bottom:16px;'>
+        <div style='color:#8b949e;font-size:11px;text-transform:uppercase;margin-bottom:8px;'>Step-by-Step Entry</div>
+        <div style='display:flex;flex-direction:column;gap:8px;'>
+          <div style='background:#21262d;border-radius:6px;padding:10px 14px;border-left:3px solid #58a6ff;'>
+            <span style='color:#58a6ff;font-weight:bold;font-size:13px;'>STEP 1 — Wait for sweep</span><br>
+            <span style='color:#e6edf3;font-size:13px;'>Watch for price to go {step1_dir} {step1_level} on 1H with a wick. Candle must close back {"above" if plan["direction"]=="LONG" else "below"} the level.</span>
+          </div>
+          <div style='background:#21262d;border-radius:6px;padding:10px 14px;border-left:3px solid #58a6ff;'>
+            <span style='color:#58a6ff;font-weight:bold;font-size:13px;'>STEP 2 — Wait for CHoCH on 1H</span><br>
+            <span style='color:#e6edf3;font-size:13px;'>After sweep, wait for price to break {choch_dir}. That break = CHoCH confirmed.</span>
+          </div>
+          <div style='background:#21262d;border-radius:6px;padding:10px 14px;border-left:3px solid #58a6ff;'>
+            <span style='color:#58a6ff;font-weight:bold;font-size:13px;'>STEP 3 — Enter on retest</span><br>
+            <span style='color:#e6edf3;font-size:13px;'>After CHoCH, price dips back into FVG/OB. Enter {"long" if plan["direction"]=="LONG" else "short"} on that dip. Do NOT enter on the CHoCH break itself.</span>
+          </div>
+        </div>
+      </div>
+      <div style='display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;'>
+        <div style='flex:1;'>
+          <div style='color:#8b949e;font-size:11px;text-transform:uppercase;margin-bottom:8px;'>Targets</div>
+          <div style='display:flex;gap:8px;flex-wrap:wrap;'>{targets_html}</div>
+        </div>
+        <div style='background:#21262d;border-radius:6px;padding:12px;min-width:140px;'>
+          <div style='color:#8b949e;font-size:11px;'>STOP LOSS</div>
+          <div style='margin-top:4px;'>{stop_html}</div>
+          <div style='color:#8b949e;font-size:11px;margin-top:8px;'>MAX HOLD</div>
+          <div style='color:#d29922;font-size:13px;'>Do not hold past $85-86</div>
+        </div>
+      </div>"""}
+      <div>
+        <div style='color:#8b949e;font-size:11px;text-transform:uppercase;margin-bottom:6px;'>15M Scalp Watch</div>
+        {m15_watch}
+      </div>
+    </div>
+  </div>
 
-    # 15M watch
-    lines += [
-        f"",
-        f"  15M CHART — WHAT TO WATCH RIGHT NOW:",
-        f"  {'─'*40}",
-    ]
-    if h15_eq_l:
-        lines.append(f"  Equal lows on 15M at: {[f'${x}' for x in h15_eq_l[:2]]}")
-        lines.append(f"  -> If swept -> look for 15M CHoCH up -> scalp long")
-    if h15_eq_h:
-        lines.append(f"  Equal highs on 15M at: {[f'${x}' for x in h15_eq_h[:2]]}")
-        lines.append(f"  -> If swept -> look for 15M CHoCH down -> scalp short")
-    if not h15_eq_l and not h15_eq_h:
-        lines.append(f"  No clear equal highs/lows on 15M right now.")
-        lines.append(f"  Wait for structure to form before scalping.")
+  <!-- TIMEFRAME CARDS -->
+  <div style='color:#8b949e;font-size:12px;text-transform:uppercase;margin:16px 0 8px;'>Timeframe Breakdown</div>
+  {tf_card(w)}
+  {tf_card(d)}
+  {tf_card(h4)}
+  {tf_card(h1)}
+  {tf_card(m15)}
 
-    return "\n".join(lines)
+  <!-- PERMANENT LEVELS -->
+  <div style='background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-top:12px;'>
+    <div style='color:#8b949e;font-size:12px;text-transform:uppercase;margin-bottom:12px;'>Key Permanent Levels to Remember</div>
+    <div style='display:flex;gap:12px;flex-wrap:wrap;'>
+      <div style='flex:1;min-width:160px;'>
+        <div style='color:#8b949e;font-size:11px;margin-bottom:6px;'>MAJOR RESISTANCE (BSL)</div>
+        <div style='color:#f85149;font-size:13px;'>$86-92 — Daily supply wall (DO NOT hold longs here)</div>
+        <div style='color:#f85149;font-size:13px;margin-top:4px;'>$120-125 — Major resistance</div>
+        <div style='color:#f85149;font-size:13px;margin-top:4px;'>$295 — ATH (ultimate BSL)</div>
+      </div>
+      <div style='flex:1;min-width:160px;'>
+        <div style='color:#8b949e;font-size:11px;margin-bottom:6px;'>MAJOR SUPPORT (SSL)</div>
+        <div style='color:#3fb950;font-size:13px;'>$72-73 — 4H strong support</div>
+        <div style='color:#3fb950;font-size:13px;margin-top:4px;'>$64-65 — Daily strong support</div>
+        <div style='color:#3fb950;font-size:13px;margin-top:4px;'>$60.13 — Absolute low (swept)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RULES -->
+  <div style='background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-top:12px;'>
+    <div style='color:#8b949e;font-size:12px;text-transform:uppercase;margin-bottom:10px;'>Rules Reminder</div>
+    {"".join(f"<div style='color:#e6edf3;font-size:13px;padding:3px 0;border-bottom:1px solid #21262d;'>{''.join(['&#10003; ',r])}</div>" for r in ["Daily/Weekly bias = your direction. Never fight it.","Wait for SWEEP before entering. No sweep = no trade.","After sweep: wait for CHoCH on 1H to confirm reversal.","Enter on the RETEST after CHoCH. Not on the break.","Stop loss always below/above the sweep wick.","NEVER hold longs past $85-86 (major daily supply wall).","NEVER risk more than 1-2% of your account per trade.","When in doubt — do not trade. Cash is a position."])}
+  </div>
+
+  <div style='text-align:center;color:#8b949e;font-size:11px;margin-top:16px;padding:16px;'>
+    Auto-generated every hour &nbsp;|&nbsp; {"Kraken" if IS_GITHUB else "Binance"} API &nbsp;|&nbsp; {now}
+  </div>
+
+</div>
+</body>
+</html>"""
 
 
-# ─── SEND EMAIL ───────────────────────────────────────────
+# ─── EMAIL + REPORT SAVE ──────────────────────────────────
 
-def send_email(subject, body):
+def send_email(subject, html):
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"]    = EMAIL_FROM
     msg["To"]      = EMAIL_TO
-    msg.attach(MIMEText(body, "plain", "utf-8"))
+    msg.attach(MIMEText(html, "html", "utf-8"))
     with smtplib.SMTP("smtp.gmail.com", 587) as s:
-        s.ehlo()
-        s.starttls()
+        s.ehlo(); s.starttls()
         s.login(EMAIL_FROM, EMAIL_PASSWORD)
         s.sendmail(EMAIL_FROM, EMAIL_TO, msg.as_string())
+
+def save_report(html):
+    os.makedirs(os.path.dirname(REPORT_PATH), exist_ok=True)
+    with open(REPORT_PATH, "w", encoding="utf-8") as f:
+        f.write(html)
 
 
 # ─── MAIN ─────────────────────────────────────────────────
 
 def main():
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    print(f"[{now}] Fetching all timeframes...")
+    src = "Kraken" if IS_GITHUB else "Binance"
+    print(f"[{now}] Fetching data from {src}...")
 
     stats = get_stats()
     price = float(stats["lastPrice"])
     chg   = float(stats["priceChangePercent"])
-    h24_h = float(stats["highPrice"])
-    h24_l = float(stats["lowPrice"])
-    vol   = float(stats["volume"])
 
-    src = "Kraken" if IS_GITHUB else "Binance"
-    print(f"  Data source: {src}")
-    print("  Fetching Weekly...")
-    w1  = get_candles("W",   100)
-    print("  Fetching Daily...")
-    d1  = get_candles("D",   200)
-    print("  Fetching 4H...")
-    h4  = get_candles("4H",  200)
-    print("  Fetching 1H...")
-    h1  = get_candles("1H",  200)
-    print("  Fetching 15M...")
-    m15 = get_candles("15M", 200)
+    print("  Weekly..."); w1  = get_candles("W",   100)
+    print("  Daily...");  d1  = get_candles("D",   200)
+    print("  4H...");     h4  = get_candles("4H",  200)
+    print("  1H...");     h1  = get_candles("1H",  200)
+    print("  15M...");    m15 = get_candles("15M", 200)
 
-    w_txt,  w_bias,  w_sw,  w_bsl,  w_ssl,  w_eqh,  w_eql  = analyse_tf(w1,  "WEEKLY (1W)")
-    d_txt,  d_bias,  d_sw,  d_bsl,  d_ssl,  d_eqh,  d_eql  = analyse_tf(d1,  "DAILY (1D)")
-    h4_txt, h4_bias, h4_sw, h4_bsl, h4_ssl, h4_eqh, h4_eql = analyse_tf(h4,  "4-HOUR (4H)")
-    h1_txt, h1_bias, h1_sw, h1_bsl, h1_ssl, h1_eqh, h1_eql = analyse_tf(h1,  "1-HOUR (1H)")
-    m_txt,  m_bias,  m_sw,  m_bsl,  m_ssl,  m_eqh,  m_eql  = analyse_tf(m15, "15-MINUTE (15M)")
+    w  = analyse_tf(w1,  "Weekly (1W)")
+    d  = analyse_tf(d1,  "Daily (1D)")
+    h4 = analyse_tf(h4,  "4-Hour (4H)")
+    h1 = analyse_tf(h1,  "1-Hour (1H)")
+    m  = analyse_tf(m15, "15-Minute (15M)")
 
-    trade = build_trade_plan(
-        price,
-        w_bias, d_bias, h4_bias,
-        h1_eqh, h1_eql, h1_bsl, h1_ssl,
-        h4_bsl, h4_ssl,
-        m_eqh,  m_eql
-    )
+    plan = build_trade_plan(price, w, d, h4, h1, m)
+    html = generate_html(stats, w, d, h4, h1, m, plan, now)
 
-    all_sweeps = w_sw + d_sw + h4_sw + h1_sw + m_sw
-    has_alert  = len(all_sweeps) > 0
+    has_alerts = len(plan["all_sweeps"]) > 0
+    subject = f"[SOL ALERT !!] ${price:.2f} ({chg:+.2f}%) — SWEEP ZONE REACHED — {now}" \
+              if has_alerts else f"[SOL] ${price:.2f} ({chg:+.2f}%) — {plan['direction']} — {now}"
 
-    if has_alert:
-        subject = f"[SOL ALERT !!] ${price:.2f} ({chg:+.2f}%) — SWEEP ZONE REACHED — {now}"
-    else:
-        subject = f"[SOL Update] ${price:.2f} ({chg:+.2f}%) — {now}"
+    print("  Saving report...")
+    save_report(html)
 
-    body = f"""
-SOL/USDT — FULL SMC ANALYSIS
-==============================
-{now}
+    print("  Sending email...")
+    send_email(subject, html)
 
-LIVE SNAPSHOT
---------------
-Price:       ${price:.2f}
-24h Change:  {chg:+.2f}%
-24h High:    ${h24_h:.2f}
-24h Low:     ${h24_l:.2f}
-24h Volume:  {vol:,.0f} SOL
-
-{"!! SWEEP ALERT ACTIVE !!" if has_alert else "No active sweep alerts"}
-{chr(10).join(all_sweeps) if has_alert else ""}
-
-{w_txt}
-
-{d_txt}
-
-{h4_txt}
-
-{h1_txt}
-
-{m_txt}
-
-{trade}
-
-{"="*50}
-QUICK RULES REMINDER
-{"="*50}
-1. Daily/Weekly bias = your direction. Never fight it.
-2. Wait for SWEEP of equal highs/lows before entering.
-3. After sweep, wait for CHoCH on 1H to confirm reversal.
-4. Enter on the RETEST after CHoCH — not on the break.
-5. Stop loss always below/above the sweep wick.
-6. Take profit at next liquidity zone (BSL or SSL).
-7. NEVER hold longs past $85-86 (major daily supply).
-8. NEVER risk more than 1-2% of account per trade.
-9. If in doubt — do not trade. Cash is a position.
-
-KEY PERMANENT LEVELS TO REMEMBER:
-  Major supply wall:  $86 - $92  (DO NOT hold longs here)
-  Previous ATH zone:  $295
-  Absolute low swept: $60.13
-{"="*50}
-Auto-generated every hour | Binance API
-"""
-
-    print(f"  Sending email...")
-    send_email(subject, body)
-    print(f"[{now}] Done. Email sent to {EMAIL_TO}")
-    print(f"  Price: ${price:.2f} | {chg:+.2f}% | Sweep alerts: {len(all_sweeps)}")
+    print(f"[{now}] Done.")
+    print(f"  Price: ${price:.2f} | {chg:+.2f}% | Direction: {plan['direction']} | Alerts: {len(plan['all_sweeps'])}")
 
 
 if __name__ == "__main__":
