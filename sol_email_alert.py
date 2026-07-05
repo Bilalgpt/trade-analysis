@@ -17,8 +17,10 @@ import os
 EMAIL_FROM     = os.environ.get("EMAIL_FROM",     "muhammadbilalafzal1@gmail.com")
 EMAIL_TO       = os.environ.get("EMAIL_TO",       "muhammadbilalafzal1@gmail.com")
 EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD", "msdimmmadnsoraqy")
-SYMBOL         = "SOLUSDT"
-BASE_URL       = "https://api.bybit.com/v5/market"
+# Auto-detect environment:
+# On GitHub Actions (US servers) -> Binance is blocked -> use Kraken
+# Locally (Pakistan) -> Kraken is blocked -> use Binance
+IS_GITHUB = os.environ.get("GITHUB_ACTIONS") == "true"
 # ──────────────────────────────────────────────────────────
 
 
@@ -28,28 +30,72 @@ def fetch(url):
         return json.loads(r.read().decode())
 
 
-def get_stats():
-    url  = f"{BASE_URL}/tickers?category=spot&symbol={SYMBOL}"
-    data = fetch(url)
-    t    = data["result"]["list"][0]
+# ── BINANCE (local) ──────────────────────────────────────
+def get_stats_binance():
+    url  = "https://api.binance.com/api/v3/ticker/24hr?symbol=SOLUSDT"
+    d    = fetch(url)
     return {
-        "lastPrice":          t["lastPrice"],
-        "priceChangePercent": str(round(float(t["price24hPcnt"]) * 100, 2)),
-        "highPrice":          t["highPrice24h"],
-        "lowPrice":           t["lowPrice24h"],
-        "volume":             t["volume24h"],
+        "lastPrice":          d["lastPrice"],
+        "priceChangePercent": d["priceChangePercent"],
+        "highPrice":          d["highPrice"],
+        "lowPrice":           d["lowPrice"],
+        "volume":             d["volume"],
     }
 
-
-def get_candles(interval, limit=200):
-    # Bybit intervals: 15, 60, 240, D, W
-    url = f"{BASE_URL}/kline?category=spot&symbol={SYMBOL}&interval={interval}&limit={limit}"
-    raw = fetch(url)["result"]["list"]
-    # Bybit returns newest first — reverse to get oldest first
-    raw = list(reversed(raw))
+def get_candles_binance(interval, limit=200):
+    # intervals: 15m, 1h, 4h, 1d, 1w
+    url = f"https://api.binance.com/api/v3/klines?symbol=SOLUSDT&interval={interval}&limit={limit}"
+    raw = fetch(url)
     return [{"time": int(c[0])//1000, "open": float(c[1]),
              "high": float(c[2]), "low": float(c[3]),
              "close": float(c[4]), "volume": float(c[5])} for c in raw]
+
+
+# ── KRAKEN (GitHub Actions) ──────────────────────────────
+def get_stats_kraken():
+    url  = "https://api.kraken.com/0/public/Ticker?pair=SOLUSD"
+    data = fetch(url)["result"]
+    key  = [k for k in data if k != "last"][0]
+    t    = data[key]
+    price  = float(t["c"][0])
+    open24 = float(t["o"])
+    chg    = ((price - open24) / open24 * 100) if open24 else 0
+    return {
+        "lastPrice":          str(round(price, 4)),
+        "priceChangePercent": str(round(chg, 2)),
+        "highPrice":          str(t["h"][1]),
+        "lowPrice":           str(t["l"][1]),
+        "volume":             str(t["v"][1]),
+    }
+
+def get_candles_kraken(interval, limit=200):
+    # intervals (minutes): 15, 60, 240, 1440, 10080
+    url    = f"https://api.kraken.com/0/public/OHLC?pair=SOLUSD&interval={interval}"
+    result = fetch(url)["result"]
+    key    = [k for k in result if k != "last"][0]
+    raw    = result[key][-limit:]
+    return [{"time": int(c[0]), "open": float(c[1]),
+             "high": float(c[2]), "low": float(c[3]),
+             "close": float(c[4]), "volume": float(c[6])} for c in raw]
+
+
+# ── UNIFIED API (auto-selects) ───────────────────────────
+def get_stats():
+    if IS_GITHUB:
+        return get_stats_kraken()
+    return get_stats_binance()
+
+def get_candles(tf, limit=200):
+    """
+    tf = timeframe string used by both APIs:
+      "W" -> weekly, "D" -> daily, "4H" -> 4 hour, "1H" -> 1 hour, "15M" -> 15 min
+    """
+    if IS_GITHUB:
+        mapping = {"W": 10080, "D": 1440, "4H": 240, "1H": 60, "15M": 15}
+        return get_candles_kraken(mapping[tf], limit)
+    else:
+        mapping = {"W": "1w", "D": "1d", "4H": "4h", "1H": "1h", "15M": "15m"}
+        return get_candles_binance(mapping[tf], limit)
 
 
 # ─── SMC TOOLS ────────────────────────────────────────────
@@ -438,16 +484,18 @@ def main():
     h24_l = float(stats["lowPrice"])
     vol   = float(stats["volume"])
 
+    src = "Kraken" if IS_GITHUB else "Binance"
+    print(f"  Data source: {src}")
     print("  Fetching Weekly...")
     w1  = get_candles("W",   100)
     print("  Fetching Daily...")
     d1  = get_candles("D",   200)
     print("  Fetching 4H...")
-    h4  = get_candles("240", 200)
+    h4  = get_candles("4H",  200)
     print("  Fetching 1H...")
-    h1  = get_candles("60",  200)
+    h1  = get_candles("1H",  200)
     print("  Fetching 15M...")
-    m15 = get_candles("15",  200)
+    m15 = get_candles("15M", 200)
 
     w_txt,  w_bias,  w_sw,  w_bsl,  w_ssl,  w_eqh,  w_eql  = analyse_tf(w1,  "WEEKLY (1W)")
     d_txt,  d_bias,  d_sw,  d_bsl,  d_ssl,  d_eqh,  d_eql  = analyse_tf(d1,  "DAILY (1D)")
