@@ -1,5 +1,10 @@
-LIVE_SOLUSDT_*.csv
-*.csv
+# Live fetched data (auto-generated, not needed in git)
+data/live/
+data/raw/
+
+# Python cache
 __pycache__/
 *.pyc
+
+# Environment
 .env

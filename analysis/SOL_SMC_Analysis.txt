@@ -1,0 +1,182 @@
+SOL/USDT 4H — Smart Money Analysis
+====================================
+Generated: July 5, 2026
+Data Source: BINANCE_SOLUSDT, 240 (4-Hour candles)
+Indicators: Ichimoku, RSI, MACD, Divergence signals
+Last Close: $80.42
+
+=====================================
+DATASET OVERVIEW
+=====================================
+Timeframe:   4-Hour candles
+Data Range:  ~April 2026 → July 5, 2026 (543 candles)
+Last Close:  $80.42
+
+=====================================
+PRICE STRUCTURE — WHAT HAPPENED
+=====================================
+Phase 1 (Apr):  $78 → $90 range     — Initial markup
+Phase 2 (May):  $90 → $98.39        — ATH in dataset (ALL-TIME HIGH in this range)
+Phase 3 (Jun):  $98.39 → $68.19     — Major markdown / distribution
+Phase 4 (Jul):  $68.19 → $82.78     — SSL sweep + recovery
+Current:        $80.42              — Pullback / retest
+
+=====================================
+LIQUIDITY MAP
+=====================================
+
+BUY-SIDE LIQUIDITY (BSL) — Above Price — Where RETAIL stops are above highs
+-----------------------------------------------------------------------------
+$82.78        — Recent swing high          — Primary BSL (freshest)
+$83.22        — Equal high                 — Double top = more liquidity
+$85–$86       — Multiple equal highs zone  — Strong BSL cluster
+$90.16–90.73  — Major swing highs          — Massive BSL pool
+$96–$98.39    — ATH zone (in dataset)      — Ultimate BSL target
+
+SELL-SIDE LIQUIDITY (SSL) — Below Price — Where RETAIL stops are below lows
+-----------------------------------------------------------------------------
+$80.20–$80.24 — Recent equal lows          — NEAREST SSL (forming NOW)
+$78–$79       — Previous swing lows        — Medium SSL
+$68.19        — Major swept low [DONE]     — ALREADY SWEPT — major liquidity grab
+
+=====================================
+KEY SMC ZONES
+=====================================
+
+1. BULLISH ORDER BLOCK (OB) — Entry Zone
+-----------------------------------------
+Zone:    $77.94–$80.09
+Why:     Big impulse candle launched price from $68 lows (row 526)
+Volume:  1,360,405 — confirms institutional interest
+Note:    Unmitigated OB — will act as demand zone if price returns
+
+2. FAIR VALUE GAP (FVG) — Imbalance
+-------------------------------------
+Location: ~$79.50–$81.50
+Reason:   Explosive move from $77.94 → $82.78 left price imbalance
+Current:  Price is filling this gap — normal behavior
+
+3. PREMIUM / DISCOUNT MODEL
+-----------------------------
+Full Range:    $68.19 (low) → $82.78 (high)
+Equilibrium:   ~$75.50
+Current Price: $80.42 = PREMIUM ZONE
+Note:          Smart Money sells premium, buys discount
+
+=====================================
+TECHNICAL READINGS (4H)
+=====================================
+
+Ichimoku:
+  Tenkan (9-period):   82.09   — price below = bearish short-term
+  Kijun (26-period):   78.11   — key support, bulls must hold above
+  Kumo (cloud):        ~70–73  — price far above = bullish HTF bias
+
+RSI (4H):        ~54           — neutral, no clear directional edge
+MACD Histogram:  1.28          — declining from peak of 4.94
+MACD Signal:     bearish divergence forming — losing bullish momentum
+
+=====================================
+TRADE SCENARIOS
+=====================================
+
+SCENARIO A — BUY after SSL Sweep (HIGH PROBABILITY)
+-----------------------------------------------------
+Thesis:   Smart Money likely engineering move DOWN to sweep $80.20–$80.24
+          equal lows before pushing price higher.
+
+Setup:
+  1. Price pushes BELOW $80.20 (SSL sweep)
+  2. Long wick / rejection candle forms (NOT a close below)
+  3. Price breaks back above sweep level (CHoCH on 1H confirms)
+  4. Enter LONG on retest of broken level
+
+Entry:    $80.20–$80.50 (after sweep + CHoCH confirmation)
+Target 1: $82.78 (BSL — recent high)
+Target 2: $85–$86 (BSL cluster)
+Stop:     Below $79.00 (structure low)
+R:R:      ~1:3 to 1:6
+
+SCENARIO B — SHORT after BSL Sweep
+-------------------------------------
+Thesis:   If price pumps first to $82.78–$83.22 to grab BSL before dropping.
+
+Setup:
+  1. Price sweeps ABOVE $82.78 (BSL grab)
+  2. Rejection wick + bearish engulfing on 4H
+  3. MACD cross bearish on 1H
+  4. Enter SHORT
+
+Entry:    ~$83.00–$83.50 (after rejection)
+Target 1: $80.20 SSL
+Target 2: $78.00 SSL
+Stop:     Above $84.50
+R:R:      ~1:3
+
+=====================================
+HOW TO IDENTIFY LIQUIDITY — COMPLETE GUIDE
+=====================================
+
+STEP 1 — Mark Swing Highs and Lows
+------------------------------------
+- Every swing high = retail bulls put stops ABOVE = Buy-Side Liquidity (BSL)
+- Every swing low  = retail bears put stops BELOW = Sell-Side Liquidity (SSL)
+- Smart Money NEEDS this liquidity to fill their large orders
+
+STEP 2 — Equal Highs/Lows = More Liquidity
+-------------------------------------------
+- If price touched same level 2+ times = more stop orders clustered there
+- These are HIGH PROBABILITY sweep targets
+- Look for them on 4H and Daily timeframes
+
+STEP 3 — Recognize the Liquidity Sweep Signature
+--------------------------------------------------
+REAL sweep (reversal incoming):
+  [+] Sharp spike THROUGH the level (wick, not body)
+  [+] HIGH volume on that candle (smart money filling orders)
+  [+] Candle CLOSES back above/below the level
+  [+] Strong reversal candle follows immediately
+  [+] RSI shows divergence at the sweep point
+
+FAKE sweep / continuation:
+  [-] Candle CLOSES beyond the level (real break = continuation)
+  [-] Volume continues increasing after break
+  [-] No reversal — price just keeps going
+
+STEP 4 — Confirm with CHoCH (Change of Character)
+---------------------------------------------------
+- After SSL sweep → price must BREAK a recent swing high on 1H or 4H
+- That break = Change of Character (CHoCH) = Smart Money reversed
+- Enter on RETEST of that broken level (now acts as support)
+- Do NOT enter on the sweep candle itself — wait for confirmation
+
+STEP 5 — Time Entries with Sessions
+-------------------------------------
+- London Open  (08:00–10:00 UTC): Most liquidity sweeps happen here
+- New York Open (13:00–15:00 UTC): Confirms or reverses London move
+- Highest institutional order flow in these windows
+- Avoid entries during Asian session (low volume, fake moves)
+
+=====================================
+CURRENT SITUATION SUMMARY
+=====================================
+
+1. Price at $80.42, below Tenkan (82.09) = short-term bearish pressure
+2. Equal lows at $80.20–$80.24 are the NEAREST SSL target
+3. EXPECT price to dip below $80.20 (sweep), reject, then launch UP
+4. If sweep confirmed → LONG toward $82.78 → $85–$86
+5. If price rallies to $82.78–$83.22 first → watch for SHORT setup
+6. MACD histogram declining → caution on fresh longs until sweep confirms
+
+KEY CONVICTION:
+The $68.19 sweep was a MAJOR institutional accumulation event.
+HTF bias is now BULLISH.
+Every dip into SSL zones is a buy opportunity until price reclaims $90+.
+
+=====================================
+NOTES
+=====================================
+- This analysis is for educational purposes
+- Always use proper risk management (max 1-2% per trade)
+- Confirm entries on lower timeframes (1H, 15M) before executing
+- Analysis generated from CSV data: BINANCE_SOLUSDT, 240_9396a.csv

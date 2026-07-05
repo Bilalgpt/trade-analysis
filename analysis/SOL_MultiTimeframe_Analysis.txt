@@ -1,0 +1,277 @@
+SOL/USDT — MULTI-TIMEFRAME SMART MONEY ANALYSIS
+=================================================
+Top-Down: Daily → 4H → 1H
+Generated: July 5, 2026
+Last Price: ~$80.60
+=================================================
+
+
+=================================================
+FILES USED
+=================================================
+Daily (1D):  BINANCE_SOLUSDT, 1D_5347a.csv     — 539 candles (Jan 2025 → Jul 2026)
+4H    (4H):  BINANCE_SOLUSDT, 240_0522d.csv    — 299 candles (May 2026 → Jul 2026)
+1H    (1H):  BINANCE_SOLUSDT, 60_97c7c.csv     — 299 candles (Jun 2026 → Jul 2026)
+
+
+=================================================
+LAYER 1 — DAILY CHART (THE BIG PICTURE / BIAS)
+=================================================
+
+FULL PRICE HISTORY SUMMARY:
+-----------------------------
+Jan 2025:  SOL at $188 → pumped to ATH $295.83
+Feb 2025:  Rejected → dropped to $112 range
+Mar-May 2025: Recovered back to $140-165 range
+Jun-Dec 2025: Long consolidation $120-160 range
+Jan-Mar 2026: Slow bleed, $120 → $91
+Apr 2026:  $91 → pushed to $90.73 (failed to break, rejection)
+May 2026:  CRASH — $90 → $60.13 (absolute low of entire dataset)
+Jun 2026:  Recovery starts, $60 → $78
+Jul 2026:  Continued recovery, current $80.60
+
+KEY NUMBERS FROM DAILY:
+------------------------
+ATH in dataset:     $295.83   (January 2025) — massive BSL above
+Major resistance:   $165-168  (strong supply zone)
+Major resistance:   $148-152  (strong supply zone)
+Major resistance:   $130-135  (supply zone)
+Major resistance:   $120-125  (supply zone)
+KEY SUPPLY ZONE:    $86-92    ← CRITICAL — where price crashed FROM
+Current price:      ~$80.60
+Key support:        $78-79    (daily swing low)
+Key support:        $72-73    (previous lows)
+Key support:        $64-65    (strong daily support)
+ABSOLUTE LOW:       $60.13    (May 2026) — already swept
+
+THE $86-92 ZONE EXPLAINED:
+----------------------------
+This is the most important daily level to know.
+Look at these daily candles:
+  - Row 440: high $91.98 → rejected
+  - Row 461: high $90.53 → rejected
+  - Row 462: high $90.73 → rejected (then CRASH began)
+
+This $86-92 zone is a MAJOR DAILY SUPPLY ZONE / BEARISH ORDER BLOCK.
+Every time price reached it, it got rejected.
+Then the final rejection caused the crash to $60.
+Price has NOT gone back there yet (currently at $80).
+When price reaches $86-92 → expect HEAVY resistance / rejection.
+
+DAILY BIAS CONCLUSION:
+-----------------------
+BIG PICTURE (from Jan 2025):  BEARISH — massive downtrend from $295 to $60
+RECENT PICTURE (from Jun 2026): LOCALLY BULLISH — recovery from $60 base
+
+What this means for trading:
+  → On 4H and 1H: look for LONG setups (riding the recovery)
+  → DO NOT hold longs past $85-86 (daily supply zone begins)
+  → The recovery is real but has a CEILING at $86-92
+  → If price eventually breaks $92 with volume → bias shifts to daily bullish
+
+
+=================================================
+LAYER 2 — 4H CHART (ZONES & STRUCTURE)
+=================================================
+
+4H PRICE STORY:
+----------------
+May 2026:    Started at $86-87, then sold off
+             Dropped to $64-65 area (major low)
+Jun 2026:    Bounced from $64 → consolidated $68-76 range
+             Then pushed up to $82.78 (KEY 4H HIGH)
+             Then to $83.22 (new 4H high = BSL)
+Jul 2026:    Pulling back from $83.22 → current $80.60
+
+KEY 4H LEVELS:
+---------------
+RESISTANCE (BSL above):
+  $83.22    — recent 4H swing high (equal highs forming with previous)
+  $83.98    — high of the strong rally candle
+  $85-86    — 4H supply zone / previous breakdown area
+  $87-88    — stronger 4H supply
+
+SUPPORT (SSL below):
+  $80.20-80.24  — EQUAL LOWS forming right now (multiple touches) ← KEY
+  $79.50-80.09  — BULLISH ORDER BLOCK (last bearish candles before big push)
+  $77.94-78.00  — FVG bottom / previous support
+  $72-73        — strong 4H support
+  $64-65        — 4H absolute lows (swept)
+
+4H FAIR VALUE GAP (FVG):
+--------------------------
+The big explosive candle: open $77.94 → high $82.78
+This candle moved so fast it left an imbalance.
+FVG zone: approximately $79.50 → $81.50
+Price came back and is partially filling this gap now (currently ~$80.60)
+Price likely to complete the fill of this FVG before pushing higher.
+
+4H STRUCTURE:
+--------------
+From the crash lows ($64): price made HH ($82.78) and HL ($80.09+)
+This is a bullish 4H structure (higher highs, higher lows)
+BUT: not confirmed until price breaks above $83.22 with strength
+Currently: 4H is in a pullback phase (normal, healthy)
+
+
+=================================================
+LAYER 3 — 1H CHART (ENTRY TIMING)
+=================================================
+
+1H RECENT PRICE ACTION:
+------------------------
+1H data starts at $71-72 area (mid-June 2026)
+  → Showed the bounce from $68-69 area
+  → Big explosive move to $82.78
+  → Then consolidation and pullback
+
+MOST RECENT 1H ACTION (last 40 candles):
+-----------------------------------------
+Price has been ranging $80.20 → $83.98 area
+Then slowly stepping down:
+  $83.98 → $83.22 → $83.05 → $82.85 → $82.34 → $82.29 → $81.84 → $80.84 → $80.60
+
+CRITICAL 1H OBSERVATION — EQUAL LOWS:
+---------------------------------------
+Look at these recent 1H lows (from last candles):
+  Row 293: low $80.54
+  Row 294: low $80.20  ← EQUAL LOW
+  Row 296: low $80.35
+  Row 297: low $80.24  ← EQUAL LOW (almost same as $80.20)
+  Row 299: low $80.37
+
+$80.20-$80.24 = EQUAL LOWS = SELL-SIDE LIQUIDITY POOL
+This has been touched 2-3 times. Smart Money WILL sweep this.
+
+1H STRUCTURE:
+--------------
+After the push to $83.98, price is making lower highs:
+  Lower high 1: $83.49
+  Lower high 2: $83.05
+  Lower high 3: $82.85
+  Lower high 4: $82.34
+
+Price is descending toward the equal lows at $80.20
+This is INDUCEMENT — Smart Money is walking price down to sweep the lows
+before reversing back up.
+
+
+=================================================
+CROSS-REFERENCE — ALL THREE TIMEFRAMES TOGETHER
+=================================================
+
+CURRENT SITUATION:
+-------------------
+
+DAILY says:
+  ✅ Locally bullish (recovery from $60 low)
+  ⚠️  Major supply ceiling at $86-92 (don't get greedy)
+  → Trade idea: BUY dips, target $85-86, NOT above
+
+4H says:
+  ✅ Bullish structure (HH + HL from $64 lows)
+  ✅ OB at $79.50-80.09 below (support/demand)
+  ✅ FVG at $79.50-81.50 (price currently filling it)
+  → Trade idea: Zone of interest = $79.50-80.20 for longs
+
+1H says:
+  🎯 Equal lows at $80.20-80.24 = SSL pool forming
+  📉 Lower highs forming = price being walked down for the sweep
+  → Trade idea: Wait for sweep of $80.20, then CHoCH up
+
+ALL THREE AGREE:
+  → A dip to $80.20 (or slightly below) is likely BEFORE next push up
+  → That dip is your BUY opportunity
+  → After sweep + CHoCH → target $82.78 → $83.22 → $85-86
+
+
+=================================================
+TRADE SETUP — RIGHT NOW
+=================================================
+
+SETUP: SSL Sweep + CHoCH Long
+
+Step 1 — WATCH FOR THE SWEEP:
+  Price pushes below $80.20 (the equal lows)
+  You will see a wick going below $80.20
+  Candle must CLOSE back above $80.20
+  Volume should spike on that candle
+
+Step 2 — WAIT FOR CHoCH:
+  After the sweep, price reverses up
+  Wait for price to break above the most recent 1H swing high
+  (Currently the nearest swing high to watch is around $82.00-82.39)
+  That break = CHoCH = trend changed on 1H
+
+Step 3 — ENTER ON THE RETEST:
+  After CHoCH, price will dip back a little (into FVG $79.50-81.50)
+  When that dip happens → ENTER LONG
+  Look for a 1H bullish candle forming in the OB/FVG zone
+
+ENTRY DETAILS:
+  Entry zone:   $80.00-80.50 (after sweep + CHoCH confirmed)
+  Stop loss:    $79.00 (below the sweep wick + OB bottom)
+  Target 1:     $82.78 (4H BSL — recent swing high)
+  Target 2:     $83.22 (4H equal highs / BSL cluster)
+  Target 3:     $85-86 (4H + Daily supply zone) ← TAKE MOST PROFITS HERE
+  R:R:          ~1:4 to 1:6
+
+INVALIDATION:
+  If price CLOSES below $79.00 on 1H → setup is dead
+  If price closes below $77.94 on 4H → full 4H structure broken, step aside
+  In these cases: wait for new setup to form at lower levels ($75, $72)
+
+
+=================================================
+WHAT TO WATCH — BEARISH SCENARIO (ALTERNATIVE)
+=================================================
+
+If price does NOT sweep $80.20 but instead pushes UP first:
+
+  → Price rallies to $82.78-83.22 (sweeps BSL above)
+  → Watch for REJECTION at $83.22-83.98 zone
+  → If 1H shows bearish CHoCH after that sweep
+  → SHORT opportunity targeting $80.20 → $79.00
+
+This scenario = Smart Money runs BSL first, then SSL
+Common in ranging markets. Both setups are valid.
+
+
+=================================================
+KEY PRICE LEVELS — QUICK REFERENCE
+=================================================
+
+ABOVE PRICE (Resistance / BSL targets):
+  $82.78   — 4H swing high (nearest BSL)
+  $83.22   — 4H equal highs (strong BSL)
+  $83.98   — 4H recent high (BSL)
+  $85-86   — 4H + Daily supply zone ← TAKE PROFITS HERE
+  $87-88   — 4H strong resistance
+  $90-92   — MAJOR DAILY SUPPLY (danger zone for longs)
+  $98-100  — Daily resistance
+  $120-125 — Daily resistance
+  $295     — ATH (ultimate BSL)
+
+BELOW PRICE (Support / SSL targets):
+  $80.20-80.24 — 1H equal lows (NEAREST — expect sweep)
+  $79.50-80.09 — 4H bullish order block
+  $79.50-81.50 — 4H FVG (partially filled)
+  $77.94-78.00 — 4H key support / FVG bottom
+  $72-73       — 4H strong support
+  $68-69       — 4H previous swing low (swept once)
+  $64-65       — Daily strong support
+  $60.13       — Absolute low (swept)
+
+
+=================================================
+SUMMARY — THREE LINES
+=================================================
+
+DAILY:  Locally bullish recovery from $60 low, hard ceiling at $86-92.
+4H:     Pullback in progress, OB + FVG support at $79.50-80.09, structure bullish.
+1H:     Equal lows at $80.20 are the trap — wait for sweep + CHoCH before entering.
+
+Best trade right now: wait for $80.20 sweep → CHoCH → long to $82.78-85.
+Do not trade against all 3 timeframes. Do not hold past $86.
+
+=================================================

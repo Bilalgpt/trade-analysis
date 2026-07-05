@@ -1,0 +1,239 @@
+TIMEFRAME GUIDE — SMART MONEY CONCEPTS
+========================================
+Which Timeframes to Use & How to Cross-Reference
+========================================
+
+
+========================================
+THE GOLDEN RULE
+========================================
+
+Always read TOP → DOWN. Never bottom up.
+
+High timeframe sets the direction.
+Low timeframe gives the entry.
+
+If you start on 5M and then check Daily — you are doing it backwards.
+If Daily says bearish, no 1H setup can make you go long.
+
+
+========================================
+THE 3 LAYERS OF EVERY TRADE
+========================================
+
+Every trade has 3 jobs. Each job needs a different timeframe.
+
+Layer 1 — BIAS    → What direction is the market going?
+Layer 2 — ZONE    → Where will Smart Money react?
+Layer 3 — ENTRY   → Exactly when do I get in?
+
+
+========================================
+BEST TIMEFRAME COMBINATIONS
+========================================
+
+SWING TRADER (hold 1–7 days) — Best for crypto
+------------------------------------------------
+Weekly  → Bias      (overall trend, major liquidity pools)
+Daily   → Zone      (order blocks, FVGs, key levels)
+4H      → Entry     (CHoCH, sweeps, confirmation)
+
+Most reliable combination for crypto swing trading.
+
+DAY TRADER (hold hours, same day)
+----------------------------------
+Daily   → Bias      (are we bullish or bearish today?)
+4H      → Zone      (where are the OBs and FVGs?)
+15M     → Entry     (CHoCH, sweep confirmation)
+5M      → Precision (exact candle entry, tight stop)
+
+YOUR CURRENT SETUP (based on 4H CSV data)
+------------------------------------------
+Daily   → Bias
+4H      → Zone + Entry confirmation
+1H      → Entry trigger (CHoCH, retest)
+
+
+========================================
+HOW TO SET UP YOUR LAYOUT (3 Charts)
+========================================
+
+Open 3 charts side by side on TradingView:
+
+LEFT chart    = Daily   (zoom out, big picture)
+MIDDLE chart  = 4H      (your main analysis chart)
+RIGHT chart   = 1H      (entry timing)
+
+
+========================================
+HOW TO CROSS-REFERENCE — STEP BY STEP
+========================================
+
+STEP 1 — START ON DAILY (Bias)
+--------------------------------
+Ask only ONE question: Is this market bullish or bearish?
+
+Look for:
+  - Is price above or below key swing highs/lows?
+  - Where is the nearest BSL (buy side) and SSL (sell side)?
+  - Overall structure: Higher highs = bullish. Lower lows = bearish.
+  - Price above Kijun line = bullish. Below = bearish.
+
+Write down: "Daily bias = BULLISH" or "BEARISH"
+
+RULE:
+  If Daily is bullish  → ONLY look for longs on lower timeframes
+  If Daily is bearish  → ONLY look for shorts on lower timeframes
+  Never trade against the Daily bias.
+
+
+STEP 2 — GO TO 4H (Find the Zone)
+------------------------------------
+Ask: Where will price react?
+
+Look for:
+  - Equal lows / equal highs (liquidity pools)
+  - Order blocks (last candle before a big move)
+  - FVGs (imbalances from fast moves)
+  - Is price in premium or discount zone?
+
+Mark these zones with horizontal boxes.
+These are your "areas of interest" — where you watch for entries.
+
+
+STEP 3 — GO TO 1H (Wait for the Entry)
+----------------------------------------
+Ask: Is the setup actually happening right now?
+
+Wait for:
+  - Price reaches your 4H zone
+  - A sweep occurs (wick through a liquidity level)
+  - CHoCH forms on 1H
+  - Price retests the CHoCH level / dips into FVG or OB
+  - A clean bullish/bearish candle forms in the zone
+
+THAT is your entry candle.
+
+
+========================================
+VISUAL FLOW — HOW IT ALL WORKS TOGETHER
+========================================
+
+DAILY  ──────────────────────────────────────────
+  Bias: BULLISH
+  Key levels: support and resistance marked
+  Decision: "Only take longs today"
+       ↓
+4H  ─────────────────────────────────────────────
+  Zone identified: equal lows (SSL pool)
+  Order Block sitting below current price
+  FVG (imbalance) marked in the zone
+  Decision: "Watch for sweep of equal lows then long setup"
+       ↓
+1H  ─────────────────────────────────────────────
+  Price sweeps below equal lows         [confirmed]
+  Reversal candle forms                 [confirmed]
+  CHoCH: breaks recent 1H swing high    [confirmed]
+  Price dips back into FVG / OB         [confirmed]
+  Bullish 1H candle closes in the zone  [confirmed]
+  → ENTER LONG HERE
+
+
+========================================
+THE ALIGNMENT RULE
+========================================
+
+The more timeframes agree → the stronger the trade.
+
+Daily bullish + 4H zone hit + 1H CHoCH    = 3/3 = STRONG — take the trade
+Daily bullish + 4H zone hit + no 1H CHoCH = 2/3 = WAIT for confirmation
+Daily bearish + 4H setup bullish          = CONFLICT = SKIP entirely
+
+Never trade when timeframes conflict.
+If they disagree, there is no trade. Move on.
+
+
+========================================
+COMMON MISTAKES WITH TIMEFRAMES
+========================================
+
+MISTAKE 1: Starting on 1H or 15M without checking Daily first
+  → You will take trades against the main trend and wonder why you lose
+  → Always Daily first, no exceptions
+
+MISTAKE 2: Using too many timeframes (5+ charts open)
+  → Creates confusion, you will find signals everywhere
+  → Stick to 3 timeframes maximum
+
+MISTAKE 3: Switching timeframes after entering a trade
+  → If you entered on 1H, manage it on 1H
+  → Do not panic-switch to 5M and see scary candles
+  → Trust the timeframe you planned on
+
+MISTAKE 4: Ignoring Daily just because 4H looks perfect
+  → A perfect 4H setup against the Daily trend loses most of the time
+  → Daily always has authority
+
+MISTAKE 5: Looking for entries on Daily
+  → Daily is ONLY for bias, never for entries
+  → Daily candles are too big, stops would be massive
+  → Use Daily to read direction, 1H to enter
+
+MISTAKE 6: Taking a trade when timeframes conflict
+  → No confluence = no trade
+  → Sitting on your hands IS a valid decision
+
+
+========================================
+QUICK REFERENCE CARD
+========================================
+
+Timeframe   Your Job              What to Look For
+----------  --------------------  ---------------------------------
+Weekly      Big picture bias      Major swing highs/lows, trend
+Daily       Bias + key levels     Structure, major OBs, SSL/BSL
+4H          Zone identification   OBs, FVGs, equal highs/lows
+1H          Entry confirmation    CHoCH, sweep, retest
+15M / 5M    Precise entry         Entry candle, tight stop
+
+
+========================================
+FOR SOL/USDT — CURRENT APPLICATION
+========================================
+
+Daily:
+  → Bullish bias confirmed (price bounced from major $68.19 sweep)
+  → Only look for longs until price reclaims $90+
+  → Key resistance: $85–86 zone, $90–91 zone
+
+4H (your CSV data):
+  → Equal lows forming at $80.20–$80.24 (SSL pool)
+  → Order Block at $79.50–$80.09
+  → FVG at $79.50–$81.50
+  → Watch for sweep of $80.20 area
+
+1H:
+  → Wait for sweep of $80.20 (wick below, close above)
+  → Wait for CHoCH (break of recent 1H swing high)
+  → Enter on the retest dip into the FVG or OB
+  → Stop: below the sweep wick
+  → Target 1: $82.78 (BSL)
+  → Target 2: $85–86 (BSL cluster)
+
+
+========================================
+SUMMARY IN ONE PARAGRAPH
+========================================
+
+Use 3 timeframes only: Daily for bias, 4H for zones, 1H for entry.
+Always go top down — Daily first, then 4H, then 1H. Never reverse this.
+If Daily says bullish, only take longs. Mark your OBs, FVGs, and
+liquidity pools on 4H. Drop to 1H and wait for a sweep + CHoCH +
+retest before entering. If all 3 timeframes agree, take the trade.
+If any timeframe conflicts, skip it and wait for the next setup.
+
+========================================
+Sources:
+- ACY Education: Multi-Timeframe SMC Analysis
+- TradingStrategyGuides: Top-Down Approach ICT/SMC
+========================================

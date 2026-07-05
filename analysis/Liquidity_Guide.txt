@@ -1,0 +1,359 @@
+HOW TO READ CHARTS LIKE SMART MONEY
+=====================================
+A Simple Guide for Beginners
+=====================================
+
+
+=====================================
+FIRST — UNDERSTAND THE GAME
+=====================================
+
+The market is NOT random.
+
+Big players (banks, hedge funds, institutions) = "Smart Money"
+Small traders (retail) = you and me
+
+Smart Money has ONE job:
+  → Find where retail traders put their stops
+  → Push price there to grab that liquidity
+  → Then reverse and go the other way
+
+This is called a LIQUIDITY SWEEP.
+
+Your job is to SPOT it happening and ride with Smart Money.
+
+
+=====================================
+WHAT IS LIQUIDITY?
+=====================================
+
+Liquidity = clusters of stop loss orders waiting in the market
+
+Two types:
+
+BUY-SIDE LIQUIDITY (BSL)
+  - Sits ABOVE price
+  - These are stop losses of people who are SHORT (selling)
+  - Also buy stop orders of breakout traders
+  - Smart Money pushes price UP to grab these, then sells
+
+SELL-SIDE LIQUIDITY (SSL)
+  - Sits BELOW price
+  - These are stop losses of people who are LONG (buying)
+  - Smart Money pushes price DOWN to grab these, then buys
+
+Simple rule:
+  Price goes UP to grab BSL → then comes back DOWN
+  Price goes DOWN to grab SSL → then comes back UP
+
+
+=====================================
+WHERE IS LIQUIDITY HIDING?
+=====================================
+
+Look for these on your chart:
+
+1. SWING HIGHS (peaks)
+   - Every time price makes a high and comes back down
+   - Retail traders who are short put their stop loss ABOVE that high
+   - So above every swing high = liquidity pool
+   - Draw a line at the top of every clear swing high
+
+2. SWING LOWS (valleys)
+   - Every time price makes a low and bounces up
+   - Retail traders who are long put their stop loss BELOW that low
+   - So below every swing low = liquidity pool
+   - Draw a line at the bottom of every clear swing low
+
+3. EQUAL HIGHS (two or more highs at same price)
+   - When price touches the same high level 2 or more times
+   - MORE stop orders pile up there = bigger liquidity pool
+   - These are HIGH PRIORITY sweep targets
+
+4. EQUAL LOWS (two or more lows at same price)
+   - Same idea, just below price
+   - Smart Money loves sweeping equal lows then reversing hard
+
+5. TRENDLINES
+   - Everyone draws the same trendline
+   - Everyone puts stops just below/above it
+   - Smart Money breaks the trendline briefly to grab stops, then reverses
+   - This is why "trendline breaks" often fake out
+
+
+=====================================
+HOW TO SPOT A LIQUIDITY SWEEP
+=====================================
+
+A sweep looks like this on the chart:
+
+STEP 1: Price is moving toward a liquidity zone (swing high or low)
+
+STEP 2: Price SPIKES through the level
+   - You'll see a long wick (shadow) on the candle
+   - It goes through the level but does NOT close beyond it
+   - This is the "grab"
+
+STEP 3: Price immediately reverses
+   - A strong candle forms in the opposite direction
+   - This confirms Smart Money got what they wanted
+
+VISUAL EXAMPLE:
+
+   SSL sweep (buy setup):
+
+   Price coming down...
+         |
+         |  ← long wick below the swing low
+   ______|_____  ← swing low level
+         |
+         ↑  ← price reverses back up strongly
+
+   BSL sweep (sell setup):
+
+         ↓  ← price reverses back down strongly
+   ______|_____  ← swing high level
+         |
+         |  ← long wick above the swing high
+   Price coming up...
+
+
+=====================================
+HOW TO CONFIRM THE SWEEP IS REAL
+=====================================
+
+Do NOT enter on the sweep candle itself. Wait for confirmation.
+
+CONFIRMATION CHECKLIST:
+  [+] The wick went through the level but candle closed back above/below
+  [+] Volume was HIGH on the sweep candle (big players moved)
+  [+] A strong reversal candle forms right after
+  [+] Price breaks a recent small swing high/low (called CHoCH)
+  [+] RSI showed oversold (below 30) on SSL sweep OR overbought (above 70) on BSL sweep
+
+If you see 3 or more of these → high probability the sweep is real
+
+
+=====================================
+CHoCH — CHANGE OF CHARACTER
+=====================================
+
+This is your entry trigger. Here's how it works:
+
+After a SELL-SIDE LIQUIDITY SWEEP (price swept lows):
+  1. Price sweeps below a swing low
+  2. Price reverses upward
+  3. Price then BREAKS a recent small swing HIGH
+  → That break = CHoCH = confirmation to go LONG
+
+After a BUY-SIDE LIQUIDITY SWEEP (price swept highs):
+  1. Price sweeps above a swing high
+  2. Price reverses downward
+  3. Price then BREAKS a recent small swing LOW
+  → That break = CHoCH = confirmation to go SHORT
+
+IMPORTANT: Enter on the RETEST of the broken level, not the break itself
+  - Price breaks → pulls back → retests → THEN you enter
+  - This gives you a better price and confirms the level held
+
+
+=====================================
+STEP BY STEP — HOW TO ANALYZE A CHART
+=====================================
+
+STEP 1: Open your 4H or Daily chart
+  - Start with big picture first
+  - Zoom out to see the last 3-6 months
+
+STEP 2: Mark all swing highs and lows
+  - Put a horizontal line at every clear peak and valley
+  - Focus on the OBVIOUS ones, not every tiny wiggle
+
+STEP 3: Identify equal highs and equal lows
+  - Are any of your lines at the same price level?
+  - Circle these — they are your priority targets
+
+STEP 4: Note where price is NOW
+  - Is price near a swing high? (BSL sweep incoming?)
+  - Is price near a swing low? (SSL sweep incoming?)
+
+STEP 5: Go to 1H chart
+  - Wait for the sweep to happen
+  - Wait for the CHoCH confirmation
+  - Enter on the retest
+
+STEP 6: Set your stop and target
+  - Stop: Just beyond the sweep wick (if it goes further, the move is real)
+  - Target 1: Next liquidity zone in the direction of your trade
+  - Target 2: The liquidity zone beyond that
+
+
+=====================================
+ORDER BLOCKS — WHERE SMART MONEY ENTERED
+=====================================
+
+An order block is the LAST candle before a big move.
+
+Bullish Order Block:
+  - The last RED (bearish) candle before a big move UP
+  - Smart Money loaded their buy orders here
+  - When price comes back to this zone → it bounces
+  - This is your buy zone
+
+Bearish Order Block:
+  - The last GREEN (bullish) candle before a big move DOWN
+  - Smart Money loaded their sell orders here
+  - When price comes back to this zone → it rejects
+  - This is your sell zone
+
+HOW TO FIND IT:
+  1. Find a big impulse move (3+ candles in one direction)
+  2. Go to the candle RIGHT BEFORE that move started
+  3. That candle's price range = your order block zone
+  4. Mark the HIGH and LOW of that candle as a zone
+
+
+=====================================
+FAIR VALUE GAP (FVG) — PRICE IMBALANCE
+=====================================
+
+A Fair Value Gap is a "gap" in price that was skipped over too fast.
+
+HOW TO SPOT IT:
+  - Look at 3 candles in a row
+  - If candle 1 high and candle 3 low do NOT overlap → that's an FVG
+  - Price almost always comes back to fill this gap
+
+Why it matters:
+  - Price is "fair" when buyers and sellers traded at every level
+  - If a level was skipped (FVG), price will return to it
+  - FVGs act as magnets — price is drawn back to fill them
+
+On a BULLISH FVG:
+  - Price went up fast, left a gap below
+  - Price will come back DOWN to fill it, then continue up
+  - This is a buy zone on the retest
+
+On a BEARISH FVG:
+  - Price went down fast, left a gap above
+  - Price will come back UP to fill it, then continue down
+  - This is a sell zone on the retest
+
+
+=====================================
+PREMIUM vs DISCOUNT ZONES
+=====================================
+
+This is simple but POWERFUL.
+
+For any price range (from a swing low to a swing high):
+  - TOP 50% of the range = PREMIUM (expensive)
+  - BOTTOM 50% of the range = DISCOUNT (cheap)
+
+Smart Money Rule:
+  → BUY in the DISCOUNT zone (bottom 50%)
+  → SELL in the PREMIUM zone (top 50%)
+
+Never buy when price is at the top of a range
+Never sell when price is at the bottom of a range
+
+How to calculate:
+  High - Low = Range
+  Low + (Range / 2) = Equilibrium (50% line)
+  Above equilibrium = Premium (look for sells)
+  Below equilibrium = Discount (look for buys)
+
+
+=====================================
+BEST TIMES TO TRADE
+=====================================
+
+Liquidity sweeps happen most often during:
+
+LONDON OPEN: 08:00 – 10:00 UTC
+  - Most active session
+  - High volume, strong moves
+  - Most sweeps happen in first 2 hours
+
+NEW YORK OPEN: 13:00 – 15:00 UTC
+  - Second most active
+  - Often reverses or confirms London direction
+  - Great for continuation entries
+
+AVOID:
+  - Asian session (00:00 – 07:00 UTC): Low volume, choppy
+  - Friday after 18:00 UTC: Liquidity dries up, random moves
+  - Major news events: Spreads widen, stops get hunted randomly
+
+
+=====================================
+QUICK REFERENCE — WHAT TO LOOK FOR
+=====================================
+
+BULLISH SETUP (looking to BUY):
+  1. Price sweeps below a swing low (SSL grab)
+  2. Long wick below the level, closes back above
+  3. High volume on the sweep candle
+  4. RSI was below 40 or showing divergence
+  5. CHoCH: price breaks a small recent high
+  6. Enter on retest → stop below the wick → target next swing high (BSL)
+
+BEARISH SETUP (looking to SELL):
+  1. Price sweeps above a swing high (BSL grab)
+  2. Long wick above the level, closes back below
+  3. High volume on the sweep candle
+  4. RSI was above 60 or showing divergence
+  5. CHoCH: price breaks a small recent low
+  6. Enter on retest → stop above the wick → target next swing low (SSL)
+
+THINGS THAT INVALIDATE YOUR SETUP:
+  - Candle CLOSES beyond the level (not just a wick) = real break, not sweep
+  - Volume is low on the sweep = no institutional involvement
+  - No CHoCH forms after the sweep = weak reversal signal
+  - Price is in the middle of a range with no clear structure = avoid
+
+
+=====================================
+COMMON MISTAKES TO AVOID
+=====================================
+
+1. ENTERING ON THE SWEEP CANDLE
+   - Wait for CHoCH confirmation first
+   - The sweep candle itself is not your entry
+
+2. CHASING PRICE
+   - If you missed the entry, let it go
+   - Another setup will come
+
+3. IGNORING THE HIGHER TIMEFRAME
+   - Always check 4H or Daily trend first
+   - Only take longs if HTF is bullish
+   - Only take shorts if HTF is bearish
+
+4. MOVING YOUR STOP LOSS
+   - If your stop is hit, the setup was wrong
+   - Accept the loss and move on
+
+5. TRADING EVERY SWEEP
+   - Not every sweep leads to a reversal
+   - Only trade with HTF confluence
+   - Quality over quantity
+
+6. RISKING TOO MUCH
+   - Never risk more than 1-2% of your account per trade
+   - The best setup means nothing if you blow your account first
+
+
+=====================================
+SUMMARY IN ONE PARAGRAPH
+=====================================
+
+Smart Money hunts liquidity. Liquidity sits above swing highs (BSL) and
+below swing lows (SSL). When price spikes through one of these levels with
+a long wick and high volume, then immediately reverses — that is a liquidity
+sweep. Wait for the Change of Character (CHoCH) to confirm the reversal,
+then enter on the retest. Buy in discount zones, sell in premium zones.
+Trade during London and New York opens. Always check the higher timeframe
+trend first. Protect your capital above everything else.
+
+=====================================

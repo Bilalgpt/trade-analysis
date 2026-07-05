@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 
 SYMBOL   = "SOLUSDT"
 BASE_URL = "https://api.binance.com/api/v3"
-OUT_DIR  = os.path.dirname(os.path.abspath(__file__))
+OUT_DIR  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "live")
 
 # Timeframes to fetch: (interval_name, binance_interval, candle_count)
 TIMEFRAMES = [
