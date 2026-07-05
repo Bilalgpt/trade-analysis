@@ -18,23 +18,35 @@ EMAIL_FROM     = os.environ.get("EMAIL_FROM",     "muhammadbilalafzal1@gmail.com
 EMAIL_TO       = os.environ.get("EMAIL_TO",       "muhammadbilalafzal1@gmail.com")
 EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD", "msdimmmadnsoraqy")
 SYMBOL         = "SOLUSDT"
-BASE_URL       = "https://api.binance.com/api/v3"
+BASE_URL       = "https://api.bybit.com/v5/market"
 # ──────────────────────────────────────────────────────────
 
 
 def fetch(url):
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=10) as r:
+    with urllib.request.urlopen(req, timeout=15) as r:
         return json.loads(r.read().decode())
 
 
 def get_stats():
-    return fetch(f"{BASE_URL}/ticker/24hr?symbol={SYMBOL}")
+    url  = f"{BASE_URL}/tickers?category=spot&symbol={SYMBOL}"
+    data = fetch(url)
+    t    = data["result"]["list"][0]
+    return {
+        "lastPrice":          t["lastPrice"],
+        "priceChangePercent": str(round(float(t["price24hPcnt"]) * 100, 2)),
+        "highPrice":          t["highPrice24h"],
+        "lowPrice":           t["lowPrice24h"],
+        "volume":             t["volume24h"],
+    }
 
 
 def get_candles(interval, limit=200):
-    url = f"{BASE_URL}/klines?symbol={SYMBOL}&interval={interval}&limit={limit}"
-    raw = fetch(url)
+    # Bybit intervals: 15, 60, 240, D, W
+    url = f"{BASE_URL}/kline?category=spot&symbol={SYMBOL}&interval={interval}&limit={limit}"
+    raw = fetch(url)["result"]["list"]
+    # Bybit returns newest first — reverse to get oldest first
+    raw = list(reversed(raw))
     return [{"time": int(c[0])//1000, "open": float(c[1]),
              "high": float(c[2]), "low": float(c[3]),
              "close": float(c[4]), "volume": float(c[5])} for c in raw]
@@ -427,15 +439,15 @@ def main():
     vol   = float(stats["volume"])
 
     print("  Fetching Weekly...")
-    w1  = get_candles("1w", 100)
+    w1  = get_candles("W",   100)
     print("  Fetching Daily...")
-    d1  = get_candles("1d", 200)
+    d1  = get_candles("D",   200)
     print("  Fetching 4H...")
-    h4  = get_candles("4h", 200)
+    h4  = get_candles("240", 200)
     print("  Fetching 1H...")
-    h1  = get_candles("1h", 200)
+    h1  = get_candles("60",  200)
     print("  Fetching 15M...")
-    m15 = get_candles("15m", 200)
+    m15 = get_candles("15",  200)
 
     w_txt,  w_bias,  w_sw,  w_bsl,  w_ssl,  w_eqh,  w_eql  = analyse_tf(w1,  "WEEKLY (1W)")
     d_txt,  d_bias,  d_sw,  d_bsl,  d_ssl,  d_eqh,  d_eql  = analyse_tf(d1,  "DAILY (1D)")
