@@ -123,6 +123,50 @@ def find_order_blocks(candles):
                     obs.append(("Bearish OB", round(data[i]["low"],2), round(data[i]["high"],2)))
     return obs[-2:] if obs else []
 
+def calculate_rsi(candles, period=14):
+    closes = [c["close"] for c in candles]
+    if len(closes) < period + 1:
+        return None
+    gains, losses = [], []
+    for i in range(1, len(closes)):
+        d = closes[i] - closes[i-1]
+        gains.append(max(d, 0))
+        losses.append(max(-d, 0))
+    avg_gain = sum(gains[:period]) / period
+    avg_loss = sum(losses[:period]) / period
+    for i in range(period, len(gains)):
+        avg_gain = (avg_gain * (period - 1) + gains[i]) / period
+        avg_loss = (avg_loss * (period - 1) + losses[i]) / period
+    if avg_loss == 0:
+        return 100.0
+    rs = avg_gain / avg_loss
+    return round(100 - (100 / (1 + rs)), 1)
+
+def rsi_zone(rsi):
+    if rsi is None:  return "N/A",        "#8b949e"
+    if rsi >= 70:    return "OVERBOUGHT",  "#f85149"
+    if rsi >= 60:    return "Strong Bull", "#d29922"
+    if rsi >= 50:    return "Bullish",     "#3fb950"
+    if rsi >= 40:    return "Bearish",     "#58a6ff"
+    if rsi >= 30:    return "Strong Bear", "#d29922"
+    return               "OVERSOLD",      "#3fb950"
+
+def rsi_divergence(candles, rsi_val):
+    """Detect simple RSI divergence using last 20 candles."""
+    if rsi_val is None or len(candles) < 20:
+        return None
+    data       = candles[-20:]
+    recent_hi  = max(c["high"] for c in data[-5:])
+    prev_hi    = max(c["high"] for c in data[:15])
+    recent_lo  = min(c["low"]  for c in data[-5:])
+    prev_lo    = min(c["low"]  for c in data[:15])
+    if recent_hi > prev_hi and rsi_val < 65:
+        return ("Bearish Div", "#f85149")
+    if recent_lo < prev_lo and rsi_val > 35:
+        return ("Bullish Div", "#3fb950")
+    return None
+
+
 def market_structure(candles):
     data  = candles[-30:]
     mid   = len(data)//2
@@ -162,22 +206,26 @@ def sweep_proximity(price, eq_h, eq_l, threshold=0.8):
     return alerts
 
 def analyse_tf(candles, label):
-    price         = candles[-1]["close"]
-    bias          = market_structure(candles)
+    price            = candles[-1]["close"]
+    bias             = market_structure(candles)
     zone, eq_pt, pct = premium_discount(candles)
-    sw_h, sw_l    = find_swings(candles)
-    eq_h, eq_l    = find_equal_levels(candles)
-    fvgs          = find_fvg(candles)
-    obs           = find_order_blocks(candles)
-    sweeps        = sweep_proximity(price, eq_h, eq_l)
-    bsl           = [h for h in sw_h if h > price][:3]
-    ssl           = [l for l in sw_l if l < price][:3]
-    last_candle   = "GREEN" if candles[-1]["close"] >= candles[-1]["open"] else "RED"
+    sw_h, sw_l       = find_swings(candles)
+    eq_h, eq_l       = find_equal_levels(candles)
+    fvgs             = find_fvg(candles)
+    obs              = find_order_blocks(candles)
+    sweeps           = sweep_proximity(price, eq_h, eq_l)
+    bsl              = [h for h in sw_h if h > price][:3]
+    ssl              = [l for l in sw_l if l < price][:3]
+    last_candle      = "GREEN" if candles[-1]["close"] >= candles[-1]["open"] else "RED"
+    rsi              = calculate_rsi(candles)
+    rsi_lbl, rsi_c   = rsi_zone(rsi)
+    rsi_div          = rsi_divergence(candles, rsi)
     return {
         "label": label, "price": price, "bias": bias,
         "zone": zone, "eq_pt": eq_pt, "pct": pct,
         "bsl": bsl, "ssl": ssl, "eq_h": eq_h, "eq_l": eq_l,
-        "fvgs": fvgs, "obs": obs, "sweeps": sweeps, "last_candle": last_candle
+        "fvgs": fvgs, "obs": obs, "sweeps": sweeps, "last_candle": last_candle,
+        "rsi": rsi, "rsi_lbl": rsi_lbl, "rsi_c": rsi_c, "rsi_div": rsi_div
     }
 
 def build_trade_plan(price, w, d, h4, h1, m15):
@@ -202,8 +250,15 @@ def build_trade_plan(price, w, d, h4, h1, m15):
         "direction": direction, "overall": overall,
         "sweep_level": sweep_level, "targets": targets,
         "stop": stop, "biases": biases,
-        "w_bias": w["bias"], "d_bias": d["bias"],
-        "h4_bias": h4["bias"], "h1_bias": h1["bias"],
+        "w_bias":   w["bias"],   "d_bias":   d["bias"],
+        "h4_bias":  h4["bias"],  "h1_bias":  h1["bias"], "m15_bias": m15["bias"],
+        "w_rsi":    w["rsi"]  if w["rsi"]  is not None else "—",
+        "d_rsi":    d["rsi"]  if d["rsi"]  is not None else "—",
+        "h4_rsi":   h4["rsi"] if h4["rsi"] is not None else "—",
+        "h1_rsi":   h1["rsi"] if h1["rsi"] is not None else "—",
+        "m15_rsi":  m15["rsi"]if m15["rsi"]is not None else "—",
+        "w_rsi_c":  w["rsi_c"],  "d_rsi_c":  d["rsi_c"],
+        "h4_rsi_c": h4["rsi_c"], "h1_rsi_c": h1["rsi_c"], "m15_rsi_c": m15["rsi_c"],
         "h1_eq_l": h1["eq_l"], "h1_eq_h": h1["eq_h"],
         "m15_eq_l": m15["eq_l"], "m15_eq_h": m15["eq_h"],
         "all_sweeps": w["sweeps"] + d["sweeps"] + h4["sweeps"] + h1["sweeps"] + m15["sweeps"]
@@ -246,6 +301,32 @@ def tf_card(tf):
                          f"padding:8px;margin:4px 0;border-radius:0 4px 4px 0;font-size:13px;color:#f85149;'>"
                          f"!! {s}</div>" for s in tf["sweeps"])
 
+    rsi_val  = tf["rsi"]
+    rsi_pct  = min(max(rsi_val, 0), 100) if rsi_val is not None else 50
+    rsi_div  = tf["rsi_div"]
+    rsi_div_html = (f"<span style='margin-left:8px;background:#21262d;border-radius:4px;"
+                    f"padding:2px 8px;font-size:11px;color:{rsi_div[1]};'>{rsi_div[0]}</span>"
+                    if rsi_div else "")
+    rsi_html = f"""
+<div style='margin-top:12px;padding-top:12px;border-top:1px solid #30363d;'>
+  <div style='display:flex;align-items:center;gap:10px;margin-bottom:6px;'>
+    <span style='color:#8b949e;font-size:11px;text-transform:uppercase;'>RSI (14)</span>
+    <span style='color:{tf["rsi_c"]};font-size:18px;font-weight:bold;'>{rsi_val if rsi_val is not None else "N/A"}</span>
+    <span style='background:#21262d;border-radius:4px;padding:2px 8px;font-size:11px;color:{tf["rsi_c"]};'>{tf["rsi_lbl"]}</span>
+    {rsi_div_html}
+  </div>
+  <div style='background:#21262d;border-radius:4px;height:8px;position:relative;overflow:hidden;'>
+    <div style='position:absolute;left:0;top:0;height:100%;width:{rsi_pct}%;background:{tf["rsi_c"]};border-radius:4px;transition:width 0.3s;'></div>
+    <!-- zone markers -->
+    <div style='position:absolute;left:30%;top:0;height:100%;width:1px;background:#444;'></div>
+    <div style='position:absolute;left:50%;top:0;height:100%;width:1px;background:#444;'></div>
+    <div style='position:absolute;left:70%;top:0;height:100%;width:1px;background:#444;'></div>
+  </div>
+  <div style='display:flex;justify-content:space-between;color:#8b949e;font-size:10px;margin-top:2px;'>
+    <span>0</span><span style='margin-left:26%;'>30</span><span>50</span><span>70</span><span>100</span>
+  </div>
+</div>"""
+
     return f"""
 <div style='background:#161b22;border:1px solid #30363d;border-radius:8px;margin:12px 0;overflow:hidden;'>
   <div style='background:#21262d;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;'>
@@ -282,6 +363,7 @@ def tf_card(tf):
       </div>
     </div>
     {sweep_html}
+    {rsi_html}
   </div>
 </div>"""
 
@@ -364,7 +446,7 @@ def generate_html(stats, w, d, h4, h1, m15, plan, now):
   <div style='background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:12px;'>
     <div style='color:#8b949e;font-size:12px;text-transform:uppercase;margin-bottom:12px;'>Timeframe Bias Summary</div>
     <div style='display:flex;gap:8px;flex-wrap:wrap;'>
-      {"".join(f"<div style='background:#21262d;border-radius:6px;padding:10px 14px;text-align:center;flex:1;min-width:80px;'><div style='color:#8b949e;font-size:11px;'>{lbl}</div><div style='color:{bias_color(b)};font-weight:bold;font-size:13px;margin-top:4px;'>{b}</div></div>" for lbl, b in [("Weekly",plan["w_bias"]),("Daily",plan["d_bias"]),("4H",plan["h4_bias"]),("1H",plan["h1_bias"])])}
+      {"".join(f"<div style='background:#21262d;border-radius:6px;padding:10px 14px;text-align:center;flex:1;min-width:80px;'><div style='color:#8b949e;font-size:11px;'>{lbl}</div><div style='color:{bias_color(b)};font-weight:bold;font-size:13px;margin-top:4px;'>{b}</div><div style='color:{rc};font-size:11px;margin-top:4px;'>RSI {rv}</div></div>" for lbl, b, rv, rc in [("Weekly",plan["w_bias"],plan["w_rsi"],plan["w_rsi_c"]),("Daily",plan["d_bias"],plan["d_rsi"],plan["d_rsi_c"]),("4H",plan["h4_bias"],plan["h4_rsi"],plan["h4_rsi_c"]),("1H",plan["h1_bias"],plan["h1_rsi"],plan["h1_rsi_c"]),("15M",plan["m15_bias"],plan["m15_rsi"],plan["m15_rsi_c"])])}
     </div>
   </div>
 
