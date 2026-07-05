@@ -1,0 +1,26 @@
+name: SOL Hourly Alert
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # runs every hour at :00
+  workflow_dispatch:        # allows manual trigger from GitHub website
+
+jobs:
+  send-alert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run SOL Alert
+        env:
+          EMAIL_FROM:     ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO:       ${{ secrets.EMAIL_TO }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        run: python sol_email_alert.py
