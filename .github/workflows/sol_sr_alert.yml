@@ -1,9 +1,7 @@
 name: SOL S/R Retest Scanner
 
 on:
-  schedule:
-    - cron: '30 * * * *'   # runs every hour at :30 (offset from SMC alert at :00)
-  workflow_dispatch:
+  workflow_dispatch:        # manual trigger only — schedule disabled
 
 permissions:
   contents: write
