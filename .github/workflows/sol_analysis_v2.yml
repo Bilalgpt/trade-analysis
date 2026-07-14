@@ -1,0 +1,37 @@
+name: SOL Hourly Analysis v2
+
+on:
+  schedule:
+    - cron: '7 * * * *'     # every hour at :07
+  workflow_dispatch:
+
+permissions:
+  contents: write            # commit docs/analysis_v2.html
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run hourly analysis + email
+        env:
+          EMAIL_FROM:     ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO:       ${{ secrets.EMAIL_TO }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        run: python sol_hourly_analysis_v2.py
+
+      - name: Commit and push report
+        run: |
+          git config user.name "SOL Analysis Bot"
+          git config user.email "bot@noreply.github.com"
+          git pull --rebase origin main || true
+          git add docs/analysis_v2.html
+          git diff --staged --quiet || git commit -m "report: hourly analysis $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push

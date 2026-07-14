@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 # ─── CONFIG ───────────────────────────────────────────────
 EMAIL_FROM     = os.environ.get("EMAIL_FROM",     "muhammadbilalafzal1@gmail.com")
 EMAIL_TO       = os.environ.get("EMAIL_TO",       "muhammadbilalafzal1@gmail.com")
-EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD", "msdimmmadnsoraqy")
+EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD", "")  # set via env / GitHub secret — never hardcode
 IS_GITHUB      = os.environ.get("GITHUB_ACTIONS") == "true"
 REPORT_PATH    = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs", "index.html")
 # ──────────────────────────────────────────────────────────
