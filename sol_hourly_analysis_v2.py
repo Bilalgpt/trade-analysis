@@ -376,8 +376,12 @@ def main():
     if not (EMAIL_FROM and EMAIL_TO and EMAIL_PASSWORD):
         print("Missing EMAIL_* env vars; report saved only.")
         return
-    send_email(subject, html)
-    print("Email sent to", EMAIL_TO)
+    try:
+        send_email(subject, html)
+        print("Email sent to", EMAIL_TO)
+    except Exception as e:
+        # never fail the workflow over mail: report still gets published
+        print("EMAIL FAILED (report still published):", e)
 
 
 if __name__ == "__main__":
